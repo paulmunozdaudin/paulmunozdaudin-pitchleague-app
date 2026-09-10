@@ -3,8 +3,9 @@ import uuid
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from app.models.enums import GameweekStatus
+from app.models.enums import GameweekStatus, StreakType
 from app.models.gameweek import Gameweek
+from app.models.gamification import UserStreak
 from app.models.league import League, LeagueMembership, Season
 from app.models.prediction import Wallet
 from app.models.user import User
@@ -18,6 +19,15 @@ def _active_member_ids(db: Session, league_id: uuid.UUID) -> list[uuid.UUID]:
         .filter(LeagueMembership.league_id == league_id, LeagueMembership.is_active.is_(True))
         .all()
     ]
+
+
+def _top3_streaks(db: Session, league_id: uuid.UUID) -> dict[uuid.UUID, int]:
+    return {
+        s.user_id: s.current_count
+        for s in db.query(UserStreak)
+        .filter(UserStreak.league_id == league_id, UserStreak.streak_type == StreakType.TOP_3_FINISH)
+        .all()
+    }
 
 
 def gameweek_ranking(db: Session, league: League, gameweek: Gameweek) -> list[RankingRow]:
@@ -38,8 +48,16 @@ def gameweek_ranking(db: Session, league: League, gameweek: Gameweek) -> list[Ra
 
     rows.sort(key=lambda r: (-r[1], str(r[0])))
     users = {u.id: u for u in db.query(User).filter(User.id.in_(member_ids)).all()}
+    streaks = _top3_streaks(db, league.id)
     return [
-        RankingRow(position=i + 1, previous_position=None, user=users[uid], balance=balance, net_change=net)
+        RankingRow(
+            position=i + 1,
+            previous_position=None,
+            user=users[uid],
+            balance=balance,
+            net_change=net,
+            streak=streaks.get(uid, 0),
+        )
         for i, (uid, balance, net) in enumerate(rows)
     ]
 
@@ -77,9 +95,17 @@ def season_ranking(db: Session, league: League, season: Season) -> list[RankingR
     positions = season_positions(db, league, season, latest_number)
     totals = _season_totals(db, league, season, latest_number)
     users = {u.id: u for u in db.query(User).filter(User.id.in_(positions.keys())).all()}
+    streaks = _top3_streaks(db, league.id)
 
     return [
-        RankingRow(position=pos, previous_position=None, user=users[uid], balance=totals.get(uid, 0), net_change=0)
+        RankingRow(
+            position=pos,
+            previous_position=None,
+            user=users[uid],
+            balance=totals.get(uid, 0),
+            net_change=0,
+            streak=streaks.get(uid, 0),
+        )
         for uid, pos in sorted(positions.items(), key=lambda kv: kv[1])
     ]
 

@@ -34,6 +34,22 @@ services:
     volumes:
       - ./backend:/app
 
+  worker:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-pitchleague}:${POSTGRES_PASSWORD:-pitchleague}@postgres:5432/${POSTGRES_DB:-pitchleague}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      backend:
+        condition: service_started
+    command: python -m app.workers.scheduler
+    volumes:
+      - ./backend:/app
+
   frontend:
     build:
       context: ./frontend

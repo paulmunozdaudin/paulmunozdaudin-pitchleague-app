@@ -101,6 +101,18 @@ def generate_next_gameweek(
     return _to_gameweek_out(db, gameweek, league, user)
 
 
+@router.post("/{gameweek_id}/refresh-odds")
+def refresh_odds(
+    gameweek_id: uuid.UUID,
+    league: League = Depends(get_league_or_404),
+    db: Session = Depends(get_db),
+    _admin: LeagueMembership = Depends(require_admin),
+) -> dict:
+    gameweek = _get_gameweek_or_404(db, league, gameweek_id)
+    updated = gameweeks_service.refresh_odds(db, gameweek)
+    return {"matches_updated": updated}
+
+
 @router.post("/{gameweek_id}/predictions", response_model=PredictionOut)
 def place_prediction(
     gameweek_id: uuid.UUID,
