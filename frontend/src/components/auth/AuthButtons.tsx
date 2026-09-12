@@ -1,8 +1,11 @@
 "use client";
 
+import { UserRound } from "lucide-react";
 import { signIn } from "next-auth/react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 function GoogleIcon() {
   return (
@@ -42,5 +45,49 @@ export function AuthButtons({ callbackUrl = "/leagues" }: { callbackUrl?: string
         <DiscordIcon /> Continuar con Discord
       </Button>
     </div>
+  );
+}
+
+const DEMO_LOGIN_ENABLED = process.env.NEXT_PUBLIC_ENABLE_DEMO_LOGIN === "true";
+
+/** Temporary no-OAuth entry point — see lib/auth.ts and docs/DEPLOYMENT.md#modo-demo. */
+export function DemoSignInButton({ callbackUrl = "/leagues" }: { callbackUrl?: string }) {
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  if (!DEMO_LOGIN_ENABLED) return null;
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (name.trim().length < 2) return;
+    setLoading(true);
+    await signIn("demo", { name: name.trim(), callbackUrl });
+  }
+
+  if (!open) {
+    return (
+      <button
+        onClick={() => setOpen(true)}
+        className="mt-2 flex items-center justify-center gap-1.5 text-sm text-muted underline-offset-4 hover:text-foreground hover:underline"
+      >
+        <UserRound className="h-3.5 w-3.5" /> Probar en modo invitado (demo)
+      </button>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="mt-3 flex w-full gap-2">
+      <Input
+        autoFocus
+        placeholder="Tu nombre"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        maxLength={40}
+      />
+      <Button type="submit" variant="secondary" disabled={loading || name.trim().length < 2}>
+        {loading ? "…" : "Entrar"}
+      </Button>
+    </form>
   );
 }

@@ -16,7 +16,7 @@ export function useLeagueRealtime(leagueId: string | undefined, onEvent: (event:
   useEffect(() => {
     if (!leagueId || !token) return;
 
-    const socket = new WebSocket(`${WS_BASE}/ws/leagues/${leagueId}?token=${encodeURIComponent(token)}`);
+    const socket = new WebSocket(`${WS_BASE}/api/v1/ws/leagues/${leagueId}?token=${encodeURIComponent(token)}`);
     socket.onmessage = (event) => {
       try {
         handlerRef.current(JSON.parse(event.data));

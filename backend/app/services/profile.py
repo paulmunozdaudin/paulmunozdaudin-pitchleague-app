@@ -3,7 +3,8 @@ import uuid
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from app.models.enums import PredictionStatus
+from app.models.enums import GameweekStatus, PredictionStatus
+from app.models.gameweek import Gameweek
 from app.models.gamification import Badge, UserBadge, UserStreak, UserXP
 from app.models.prediction import Prediction, Wallet
 from app.schemas.gamification import BadgeOut, ProfileStats
@@ -12,7 +13,14 @@ from app.services.gamification import XP_PER_LEVEL
 
 def compute_profile_stats(db: Session, user_id: uuid.UUID, league_id: uuid.UUID | None = None) -> ProfileStats:
     prediction_q = db.query(Prediction).filter(Prediction.user_id == user_id)
-    wallet_q = db.query(Wallet).filter(Wallet.user_id == user_id)
+    # Only gameweeks that have actually finished count towards "weeks
+    # played" / "best week" — an in-progress wallet's balance is just money
+    # currently at risk, not a result yet.
+    wallet_q = (
+        db.query(Wallet)
+        .join(Gameweek, Gameweek.id == Wallet.gameweek_id)
+        .filter(Wallet.user_id == user_id, Gameweek.status == GameweekStatus.SETTLED)
+    )
     if league_id:
         prediction_q = prediction_q.filter(Prediction.league_id == league_id)
         wallet_q = wallet_q.filter(Wallet.league_id == league_id)

@@ -128,7 +128,11 @@ def test_settlement_pays_out_and_updates_ranking(client, db_session, alice_heade
     assert {row["position"] for row in ranking} == {1, 2}
 
     notifications = client.get("/api/v1/notifications", headers=alice_headers).json()
-    assert any(n["type"] == "gameweek_settled" for n in notifications)
+    settled_notification = next(n for n in notifications if n["type"] == "gameweek_settled")
+    # The frontend deep-links straight to the results screen from this
+    # notification — both ids must be present or that link silently breaks.
+    assert settled_notification["data"]["league_id"] == league["id"]
+    assert settled_notification["data"]["gameweek_id"] == gameweek["id"]
 
     stats = client.get("/api/v1/profile/me/stats", headers=alice_headers).json()
     assert stats["gameweeks_played"] == 1

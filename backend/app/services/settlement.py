@@ -149,5 +149,10 @@ def _notify_members(db: Session, gameweek: Gameweek) -> None:
             type="gameweek_settled",
             title=f"{gameweek.name} terminada",
             body=f"Terminaste #{row.position} con {sign}{row.net_change} créditos.",
-            data={"gameweek_id": str(gameweek.id), "position": row.position, "net_change": row.net_change},
+            data={
+                "league_id": str(league.id),
+                "gameweek_id": str(gameweek.id),
+                "position": row.position,
+                "net_change": row.net_change,
+            },
         )
