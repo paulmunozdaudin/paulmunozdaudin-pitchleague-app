@@ -107,7 +107,7 @@ export default function GameweekPage() {
 
   return (
     <BetSlipProvider leagueId={league.id} gameweekId={gameweek.id} onPlaced={load}>
-      <main className="mx-auto max-w-6xl px-4 py-8 pb-28 sm:px-6 lg:pb-8">
+      <main className="mx-auto max-w-6xl px-4 py-8 pb-40 sm:px-6 lg:pb-8">
         <Card className="mb-6 p-5">
           <div className="flex items-center justify-between">
             <div>

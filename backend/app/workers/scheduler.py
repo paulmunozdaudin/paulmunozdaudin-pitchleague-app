@@ -36,6 +36,11 @@ def tick() -> None:
     try:
         gameweeks_service.lock_expired_gameweeks(db)
 
+        try:
+            gameweeks_service.send_deadline_reminders(db)
+        except Exception:  # noqa: BLE001 — a reminder failure shouldn't stop the tick
+            logger.exception("Failed to send deadline reminders")
+
         for gameweek in db.query(Gameweek).filter(Gameweek.status == GameweekStatus.OPEN).all():
             try:
                 gameweeks_service.refresh_odds(db, gameweek)

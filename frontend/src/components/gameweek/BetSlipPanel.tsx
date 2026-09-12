@@ -156,7 +156,7 @@ export function BetSlipMobileBar({ availableBudget }: { availableBudget: number 
       <button
         onClick={() => setOpen(true)}
         className={cn(
-          "fixed inset-x-4 bottom-4 z-30 flex items-center justify-between rounded-2xl bg-primary px-5 py-4 text-primary-foreground shadow-2xl lg:hidden"
+          "fixed inset-x-4 bottom-20 z-30 flex items-center justify-between rounded-2xl bg-primary px-5 py-4 text-primary-foreground shadow-2xl lg:hidden"
         )}
       >
         <span className="flex items-center gap-2 font-semibold">
@@ -171,7 +171,7 @@ export function BetSlipMobileBar({ availableBudget }: { availableBudget: number 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-black/60 lg:hidden"
+            className="fixed inset-0 z-50 bg-black/60 lg:hidden"
             onClick={() => setOpen(false)}
           >
             <motion.div

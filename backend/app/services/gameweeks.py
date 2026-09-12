@@ -1,13 +1,19 @@
+from datetime import timedelta
+
 from fastapi import HTTPException
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.db.base import utcnow
+from app.models.bet import Bet
 from app.models.enums import GameweekStatus
 from app.models.gameweek import Gameweek, Match, OddsSnapshot
 from app.models.gamification import Challenge
-from app.models.league import League, Season
+from app.models.league import League, LeagueMembership, Season
+from app.services import notifications
 from app.services.odds_providers import get_odds_provider
+
+DEADLINE_REMINDER_WINDOW = timedelta(hours=2)
 
 DEFAULT_CHALLENGES = [
     ("five_correct", "Racha de 5", "Acierta 5 predicciones en esta jornada", 80),
@@ -138,3 +144,43 @@ def lock_expired_gameweeks(db: Session) -> None:
         {"status": GameweekStatus.LOCKED}
     )
     db.commit()
+
+
+def send_deadline_reminders(db: Session) -> int:
+    """One reminder per gameweek, to members who haven't predicted yet —
+    fired once (deadline_reminder_sent) so the countdown never turns into
+    spam, per the brief's "notificaciones sin spam" requirement."""
+    now = utcnow()
+    due = (
+        db.query(Gameweek)
+        .filter(
+            Gameweek.status == GameweekStatus.OPEN,
+            Gameweek.deadline_reminder_sent.is_(False),
+            Gameweek.locks_at <= now + DEADLINE_REMINDER_WINDOW,
+            Gameweek.locks_at > now,
+        )
+        .all()
+    )
+    sent = 0
+    for gameweek in due:
+        season = db.get(Season, gameweek.season_id)
+        league = db.get(League, season.league_id)
+        member_ids = {m.user_id for m in db.query(LeagueMembership).filter(LeagueMembership.league_id == league.id).all()}
+        already_picked = {
+            b.user_id for b in db.query(Bet).filter(Bet.gameweek_id == gameweek.id).all()
+        }
+        hours_left = round((gameweek.locks_at - now).total_seconds() / 3600)
+        for user_id in member_ids - already_picked:
+            notifications.create_notification(
+                db,
+                user_id=user_id,
+                league_id=league.id,
+                type="deadline_reminder",
+                title=f"{gameweek.name} se bloquea pronto",
+                body=f"Quedan {max(hours_left, 1)}h para que se bloqueen las predicciones en {league.name}. ¡Todavía no has predicho!",
+                data={"league_id": str(league.id), "gameweek_id": str(gameweek.id)},
+            )
+            sent += 1
+        gameweek.deadline_reminder_sent = True
+        db.commit()
+    return sent

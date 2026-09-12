@@ -19,6 +19,7 @@ class Gameweek(UUIDPKMixin, TimestampMixin, Base):
     locks_at: Mapped[datetime]
     budget: Mapped[int] = mapped_column(Integer)
     status: Mapped[GameweekStatus] = mapped_column(default=GameweekStatus.UPCOMING)
+    deadline_reminder_sent: Mapped[bool] = mapped_column(default=False)
 
     season: Mapped["Season"] = relationship(back_populates="gameweeks")
     matches: Mapped[list["Match"]] = relationship(

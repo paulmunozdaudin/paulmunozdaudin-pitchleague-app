@@ -154,6 +154,16 @@ export interface ProfileStats {
   badges: Badge[];
 }
 
+export type ActivityType = "bet_placed" | "streak_milestone" | "badge_earned" | "gameweek_settled";
+
+export interface LeagueActivity {
+  id: string;
+  user: User;
+  type: ActivityType;
+  data: Record<string, unknown>;
+  created_at: string;
+}
+
 export interface NotificationItem {
   id: string;
   type: string;

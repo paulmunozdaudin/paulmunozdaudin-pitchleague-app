@@ -10,10 +10,11 @@ from sqlalchemy.orm import Session
 
 from app.db.base import utcnow
 from app.models.bet import Bet, BetLeg, Wallet
-from app.models.enums import BetStatus, GameweekStatus, Market, MatchOutcome, MatchStatus, Selection
+from app.models.enums import ActivityType, BetStatus, GameweekStatus, Market, MatchOutcome, MatchStatus, Selection
 from app.models.gameweek import Gameweek, Match
 from app.models.league import League, Season
 from app.services import gamification, notifications, rankings
+from app.services.activity import record_activity
 from app.services.odds_providers import get_odds_provider
 
 
@@ -162,6 +163,24 @@ def _notify_members(db: Session, gameweek: Gameweek) -> None:
     season = db.get(Season, gameweek.season_id)
     league = db.get(League, season.league_id)
     ranking = rankings.gameweek_ranking(db, league, gameweek)
+
+    if ranking:
+        winner = ranking[0]
+        record_activity(
+            db,
+            league_id=league.id,
+            user_id=winner.user.id,
+            type=ActivityType.GAMEWEEK_SETTLED,
+            data={
+                "gameweek_id": str(gameweek.id),
+                "gameweek_name": gameweek.name,
+                "net_change": winner.net_change,
+                "top3": [
+                    {"name": row.user.name, "net_change": row.net_change} for row in ranking[:3]
+                ],
+            },
+        )
+        db.commit()
 
     for row in ranking:
         sign = "+" if row.net_change >= 0 else ""

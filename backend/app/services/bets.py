@@ -135,6 +135,7 @@ def place_bet(db: Session, user: User, league: League, gameweek: Gameweek, paylo
             "matches": [f"{m.home_team} vs {m.away_team}" for m, _ in resolved_legs],
         },
     )
+    db.commit()
     return bet
 
 
