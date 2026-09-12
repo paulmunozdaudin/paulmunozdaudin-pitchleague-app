@@ -4,8 +4,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { RefreshCw, Sparkles } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
+import { BetSlipMobileBar, BetSlipPanel } from "@/components/gameweek/BetSlipPanel";
+import { BetSlipProvider } from "@/components/gameweek/BetSlipContext";
 import { MatchCard } from "@/components/gameweek/MatchCard";
-import { PredictionDialog } from "@/components/gameweek/PredictionDialog";
 import { useLeague } from "@/components/league/LeagueContext";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -14,7 +15,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useApi } from "@/hooks/useApi";
 import { useLeagueRealtime } from "@/hooks/useLeagueRealtime";
 import { ApiError } from "@/lib/api";
-import type { Gameweek, Match, Selection } from "@/types/api";
+import type { Gameweek } from "@/types/api";
 
 function useCountdown(target: string) {
   const [label, setLabel] = useState("");
@@ -39,7 +40,6 @@ export default function GameweekPage() {
   const [gameweek, setGameweek] = useState<Gameweek | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [generating, setGenerating] = useState(false);
-  const [pick, setPick] = useState<{ match: Match; selection: Selection } | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -104,63 +104,58 @@ export default function GameweekPage() {
   const balance = gameweek.my_wallet_balance ?? gameweek.budget;
   const starting = gameweek.my_wallet_starting ?? gameweek.budget;
   const progressPct = starting > 0 ? (balance / starting) * 100 : 0;
-  const availableForPick = pick
-    ? balance + (pick.match.my_prediction?.match_id === pick.match.id ? pick.match.my_prediction.stake : 0)
-    : balance;
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-      <Card className="mb-6 p-5">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs text-muted">{gameweek.name}</p>
-            <p className="text-2xl font-bold tabular-nums">{balance.toLocaleString("es-ES")} créditos</p>
+    <BetSlipProvider leagueId={league.id} gameweekId={gameweek.id} onPlaced={load}>
+      <main className="mx-auto max-w-6xl px-4 py-8 pb-28 sm:px-6 lg:pb-8">
+        <Card className="mb-6 p-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted">{gameweek.name}</p>
+              <p className="text-2xl font-bold tabular-nums">{balance.toLocaleString("es-ES")} créditos</p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-muted">Se bloquea en</p>
+              <p className="font-semibold text-warning">{countdown}</p>
+            </div>
           </div>
-          <div className="text-right">
-            <p className="text-xs text-muted">Se bloquea en</p>
-            <p className="font-semibold text-warning">{countdown}</p>
+          <Progress value={Math.max(0, Math.min(100, progressPct))} className="mt-4" />
+        </Card>
+
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
+          <AnimatePresence mode="popLayout">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {gameweek.matches.map((match, i) => (
+                <motion.div
+                  key={match.id}
+                  layout
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.04 }}
+                >
+                  <MatchCard leagueId={league.id} match={match} />
+                </motion.div>
+              ))}
+            </div>
+          </AnimatePresence>
+
+          <div className="hidden lg:block">
+            <div className="sticky top-6">
+              <BetSlipPanel availableBudget={balance} />
+            </div>
           </div>
         </div>
-        <Progress value={Math.max(0, Math.min(100, progressPct))} className="mt-4" />
-      </Card>
 
-      <AnimatePresence mode="popLayout">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {gameweek.matches.map((match, i) => (
-            <motion.div
-              key={match.id}
-              layout
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.04 }}
-            >
-              <MatchCard leagueId={league.id} match={match} onPick={(selection) => setPick({ match, selection })} />
-            </motion.div>
-          ))}
-        </div>
-      </AnimatePresence>
+        {league.is_admin && (
+          <div className="mt-6 flex justify-center">
+            <Button variant="ghost" size="sm" onClick={load}>
+              <RefreshCw className="h-3.5 w-3.5" /> Actualizar
+            </Button>
+          </div>
+        )}
 
-      {league.is_admin && (
-        <div className="mt-6 flex justify-center">
-          <Button variant="ghost" size="sm" onClick={load}>
-            <RefreshCw className="h-3.5 w-3.5" /> Actualizar
-          </Button>
-        </div>
-      )}
-
-      {pick && (
-        <PredictionDialog
-          open={!!pick}
-          onOpenChange={(open) => !open && setPick(null)}
-          leagueId={league.id}
-          gameweekId={gameweek.id}
-          match={pick.match}
-          availableBudget={availableForPick}
-          initialMarket="winner"
-          initialSelection={pick.selection}
-          onConfirmed={() => load()}
-        />
-      )}
-    </main>
+        <BetSlipMobileBar availableBudget={balance} />
+      </main>
+    </BetSlipProvider>
   );
 }

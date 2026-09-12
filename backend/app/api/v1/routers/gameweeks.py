@@ -8,14 +8,14 @@ from app.api.v1.deps import get_league_or_404, get_membership, require_admin
 from app.db.base import utcnow
 from app.db.session import get_db
 from app.core.security import get_current_user
+from app.models.bet import Bet, BetLeg
 from app.models.gameweek import Gameweek
 from app.models.league import League, LeagueMembership
-from app.models.prediction import Prediction
 from app.models.user import User
-from app.schemas.gameweek import GameweekOut, MatchOut, OddsOut
-from app.schemas.prediction import PredictionCreate, PredictionOut
+from app.schemas.bet import BetCreate, BetOut
+from app.schemas.gameweek import GameweekOut, MatchLegSummary, MatchOut, OddsOut
+from app.services import bets as bets_service
 from app.services import gameweeks as gameweeks_service
-from app.services import predictions as predictions_service
 from app.services import rankings as rankings_service
 from app.services import settlement as settlement_service
 from app.services.realtime import manager
@@ -25,20 +25,32 @@ router = APIRouter(prefix="/leagues/{league_id}/gameweeks", tags=["gameweeks"])
 
 
 def _to_gameweek_out(db: Session, gameweek: Gameweek, league: League, user: User) -> GameweekOut:
-    my_predictions = {
-        p.match_id: p
-        for p in db.query(Prediction)
-        .filter(Prediction.gameweek_id == gameweek.id, Prediction.user_id == user.id)
+    legs_by_match: dict[uuid.UUID, list[MatchLegSummary]] = {}
+    leg_rows = (
+        db.query(BetLeg, Bet.id)
+        .join(Bet, Bet.id == BetLeg.bet_id)
+        .filter(Bet.gameweek_id == gameweek.id, Bet.user_id == user.id)
         .all()
-    }
+    )
+    for leg, bet_id in leg_rows:
+        legs_by_match.setdefault(leg.match_id, []).append(
+            MatchLegSummary(
+                bet_id=bet_id,
+                market=leg.market,
+                selection=leg.selection,
+                line=leg.line,
+                odds_price_at_pick=leg.odds_price_at_pick,
+                status=leg.status,
+            )
+        )
+
     now = utcnow()
     matches = []
     for match in gameweek.matches:
         match_out = MatchOut.model_validate(match)
         match_out.odds = [OddsOut.model_validate(quote) for quote in match.current_odds()]
         match_out.is_locked = now >= match.kickoff_at
-        prediction = my_predictions.get(match.id)
-        match_out.my_prediction = PredictionOut.model_validate(prediction) if prediction else None
+        match_out.my_legs = legs_by_match.get(match.id, [])
         matches.append(match_out)
 
     wallet = get_or_create_wallet(db, user.id, league.id, gameweek)
@@ -113,44 +125,42 @@ def refresh_odds(
     return {"matches_updated": updated}
 
 
-@router.post("/{gameweek_id}/predictions", response_model=PredictionOut)
-def place_prediction(
+@router.post("/{gameweek_id}/bets", response_model=BetOut)
+def place_bet(
     gameweek_id: uuid.UUID,
-    payload: PredictionCreate,
+    payload: BetCreate,
     league: League = Depends(get_league_or_404),
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
     _membership: LeagueMembership = Depends(get_membership),
-) -> PredictionOut:
+) -> BetOut:
     gameweek = _get_gameweek_or_404(db, league, gameweek_id)
-    prediction = predictions_service.place_prediction(db, user, league, gameweek, payload)
-    return PredictionOut.model_validate(prediction)
+    bet = bets_service.place_bet(db, user, league, gameweek, payload)
+    return BetOut.model_validate(bet)
 
 
-@router.delete("/{gameweek_id}/predictions/{prediction_id}", status_code=status.HTTP_204_NO_CONTENT)
-def cancel_prediction(
+@router.delete("/{gameweek_id}/bets/{bet_id}", status_code=status.HTTP_204_NO_CONTENT)
+def cancel_bet(
     gameweek_id: uuid.UUID,
-    prediction_id: uuid.UUID,
+    bet_id: uuid.UUID,
     league: League = Depends(get_league_or_404),
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
     _membership: LeagueMembership = Depends(get_membership),
 ) -> None:
-    predictions_service.cancel_prediction(db, user, league, prediction_id)
+    bets_service.cancel_bet(db, user, league, bet_id)
 
 
-@router.get("/{gameweek_id}/predictions/me", response_model=list[PredictionOut])
-def list_my_predictions(
+@router.get("/{gameweek_id}/bets/me", response_model=list[BetOut])
+def list_my_bets(
     gameweek_id: uuid.UUID,
     league: League = Depends(get_league_or_404),
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
     _membership: LeagueMembership = Depends(get_membership),
-) -> list[PredictionOut]:
+) -> list[BetOut]:
     gameweek = _get_gameweek_or_404(db, league, gameweek_id)
-    return [
-        PredictionOut.model_validate(p) for p in predictions_service.list_my_predictions(db, user, league, gameweek)
-    ]
+    return [BetOut.model_validate(b) for b in bets_service.list_my_bets(db, user, league, gameweek)]
 
 
 @router.post("/{gameweek_id}/settle")

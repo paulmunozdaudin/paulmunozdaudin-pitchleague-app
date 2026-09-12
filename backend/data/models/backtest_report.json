@@ -1,0 +1,2303 @@
+{
+  "E0": {
+    "market": {
+      "n": 5884,
+      "brier_score": 0.5696,
+      "log_loss": 0.9611,
+      "accuracy": 0.5471,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0806,
+          "actual_freq": 0.066,
+          "count": 106
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.155,
+          "actual_freq": 0.159,
+          "count": 610
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2506,
+          "actual_freq": 0.2716,
+          "count": 751
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3561,
+          "actual_freq": 0.3404,
+          "count": 1087
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4493,
+          "actual_freq": 0.4388,
+          "count": 1185
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.547,
+          "actual_freq": 0.5625,
+          "count": 800
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6505,
+          "actual_freq": 0.6768,
+          "count": 625
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7506,
+          "actual_freq": 0.7348,
+          "count": 509
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8373,
+          "actual_freq": 0.8756,
+          "count": 209
+        },
+        {
+          "bin_low": 0.9,
+          "bin_high": 1.0,
+          "predicted_mean": 0.9128,
+          "actual_freq": 1.0,
+          "count": 2
+        }
+      ]
+    },
+    "elo": {
+      "n": 5884,
+      "brier_score": 0.5808,
+      "log_loss": 0.9777,
+      "accuracy": 0.5335,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0782,
+          "actual_freq": 0.0845,
+          "count": 71
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1576,
+          "actual_freq": 0.1663,
+          "count": 523
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2524,
+          "actual_freq": 0.2548,
+          "count": 836
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3531,
+          "actual_freq": 0.3663,
+          "count": 1174
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4489,
+          "actual_freq": 0.4499,
+          "count": 1198
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5471,
+          "actual_freq": 0.5431,
+          "count": 893
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6479,
+          "actual_freq": 0.6975,
+          "count": 734
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7412,
+          "actual_freq": 0.7724,
+          "count": 413
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8141,
+          "actual_freq": 0.9286,
+          "count": 42
+        }
+      ]
+    },
+    "logistic_regression": {
+      "n": 5884,
+      "brier_score": 0.582,
+      "log_loss": 0.9801,
+      "accuracy": 0.5348,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0776,
+          "actual_freq": 0.1095,
+          "count": 137
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1549,
+          "actual_freq": 0.1739,
+          "count": 529
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2511,
+          "actual_freq": 0.2607,
+          "count": 725
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.353,
+          "actual_freq": 0.3521,
+          "count": 943
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4491,
+          "actual_freq": 0.4314,
+          "count": 1078
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5479,
+          "actual_freq": 0.5042,
+          "count": 944
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6494,
+          "actual_freq": 0.6168,
+          "count": 728
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7471,
+          "actual_freq": 0.7297,
+          "count": 555
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8346,
+          "actual_freq": 0.8458,
+          "count": 240
+        },
+        {
+          "bin_low": 0.9,
+          "bin_high": 1.0,
+          "predicted_mean": 0.9087,
+          "actual_freq": 0.8,
+          "count": 5
+        }
+      ]
+    },
+    "dixon_coles": {
+      "n": 5884,
+      "brier_score": 0.5849,
+      "log_loss": 0.997,
+      "accuracy": 0.5272,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0632,
+          "actual_freq": 0.1313,
+          "count": 99
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1605,
+          "actual_freq": 0.1799,
+          "count": 478
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2519,
+          "actual_freq": 0.273,
+          "count": 879
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3509,
+          "actual_freq": 0.3759,
+          "count": 1168
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4482,
+          "actual_freq": 0.4255,
+          "count": 1121
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5455,
+          "actual_freq": 0.5451,
+          "count": 875
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6483,
+          "actual_freq": 0.646,
+          "count": 661
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7466,
+          "actual_freq": 0.7392,
+          "count": 418
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8364,
+          "actual_freq": 0.8736,
+          "count": 174
+        },
+        {
+          "bin_low": 0.9,
+          "bin_high": 1.0,
+          "predicted_mean": 0.9216,
+          "actual_freq": 0.9091,
+          "count": 11
+        }
+      ]
+    },
+    "poisson": {
+      "n": 5884,
+      "brier_score": 0.5933,
+      "log_loss": 1.0098,
+      "accuracy": 0.5199,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0454,
+          "actual_freq": 0.2105,
+          "count": 38
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1645,
+          "actual_freq": 0.1593,
+          "count": 364
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2488,
+          "actual_freq": 0.2627,
+          "count": 830
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3501,
+          "actual_freq": 0.3681,
+          "count": 1084
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4494,
+          "actual_freq": 0.4194,
+          "count": 1321
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5479,
+          "actual_freq": 0.5253,
+          "count": 868
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6484,
+          "actual_freq": 0.6132,
+          "count": 698
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7429,
+          "actual_freq": 0.7119,
+          "count": 531
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8336,
+          "actual_freq": 0.8759,
+          "count": 145
+        },
+        {
+          "bin_low": 0.9,
+          "bin_high": 1.0,
+          "predicted_mean": 0.9142,
+          "actual_freq": 0.8,
+          "count": 5
+        }
+      ]
+    },
+    "gradient_boosting": {
+      "n": 5884,
+      "brier_score": 0.6019,
+      "log_loss": 1.0253,
+      "accuracy": 0.5148,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0685,
+          "actual_freq": 0.1747,
+          "count": 166
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1548,
+          "actual_freq": 0.2064,
+          "count": 562
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.252,
+          "actual_freq": 0.2714,
+          "count": 796
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3565,
+          "actual_freq": 0.3812,
+          "count": 934
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4483,
+          "actual_freq": 0.4355,
+          "count": 1139
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5475,
+          "actual_freq": 0.5027,
+          "count": 752
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6484,
+          "actual_freq": 0.5941,
+          "count": 542
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7477,
+          "actual_freq": 0.6704,
+          "count": 452
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8476,
+          "actual_freq": 0.7479,
+          "count": 361
+        },
+        {
+          "bin_low": 0.9,
+          "bin_high": 1.0,
+          "predicted_mean": 0.9388,
+          "actual_freq": 0.8,
+          "count": 180
+        }
+      ]
+    }
+  },
+  "SP1": {
+    "market": {
+      "n": 5941,
+      "brier_score": 0.5672,
+      "log_loss": 0.9563,
+      "accuracy": 0.5423,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.077,
+          "actual_freq": 0.1176,
+          "count": 136
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1525,
+          "actual_freq": 0.1733,
+          "count": 404
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2577,
+          "actual_freq": 0.2169,
+          "count": 650
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3535,
+          "actual_freq": 0.3545,
+          "count": 1148
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4504,
+          "actual_freq": 0.4608,
+          "count": 1441
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5487,
+          "actual_freq": 0.5494,
+          "count": 952
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6481,
+          "actual_freq": 0.7076,
+          "count": 602
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.749,
+          "actual_freq": 0.8185,
+          "count": 336
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8472,
+          "actual_freq": 0.879,
+          "count": 248
+        },
+        {
+          "bin_low": 0.9,
+          "bin_high": 1.0,
+          "predicted_mean": 0.9086,
+          "actual_freq": 0.9583,
+          "count": 24
+        }
+      ]
+    },
+    "logistic_regression": {
+      "n": 5941,
+      "brier_score": 0.5813,
+      "log_loss": 0.9774,
+      "accuracy": 0.5297,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0763,
+          "actual_freq": 0.1818,
+          "count": 143
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.148,
+          "actual_freq": 0.1602,
+          "count": 412
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2528,
+          "actual_freq": 0.2708,
+          "count": 506
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3533,
+          "actual_freq": 0.3266,
+          "count": 836
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4525,
+          "actual_freq": 0.4197,
+          "count": 1196
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.548,
+          "actual_freq": 0.4962,
+          "count": 1191
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6465,
+          "actual_freq": 0.5992,
+          "count": 786
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7464,
+          "actual_freq": 0.7505,
+          "count": 477
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8463,
+          "actual_freq": 0.8459,
+          "count": 331
+        },
+        {
+          "bin_low": 0.9,
+          "bin_high": 1.0,
+          "predicted_mean": 0.9132,
+          "actual_freq": 0.9365,
+          "count": 63
+        }
+      ]
+    },
+    "elo": {
+      "n": 5941,
+      "brier_score": 0.5821,
+      "log_loss": 0.9786,
+      "accuracy": 0.5262,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0814,
+          "actual_freq": 0.1961,
+          "count": 102
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1485,
+          "actual_freq": 0.1759,
+          "count": 489
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2558,
+          "actual_freq": 0.2575,
+          "count": 699
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3536,
+          "actual_freq": 0.3836,
+          "count": 1228
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4479,
+          "actual_freq": 0.4667,
+          "count": 1485
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5443,
+          "actual_freq": 0.5624,
+          "count": 889
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6448,
+          "actual_freq": 0.7132,
+          "count": 544
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7487,
+          "actual_freq": 0.8362,
+          "count": 464
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8079,
+          "actual_freq": 0.9024,
+          "count": 41
+        }
+      ]
+    },
+    "dixon_coles": {
+      "n": 5941,
+      "brier_score": 0.5808,
+      "log_loss": 0.9852,
+      "accuracy": 0.5306,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0676,
+          "actual_freq": 0.1759,
+          "count": 108
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1537,
+          "actual_freq": 0.1732,
+          "count": 456
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2563,
+          "actual_freq": 0.2811,
+          "count": 555
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3534,
+          "actual_freq": 0.3496,
+          "count": 1230
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4501,
+          "actual_freq": 0.4531,
+          "count": 1344
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5472,
+          "actual_freq": 0.5391,
+          "count": 1035
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6446,
+          "actual_freq": 0.6862,
+          "count": 564
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7458,
+          "actual_freq": 0.7516,
+          "count": 314
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8508,
+          "actual_freq": 0.848,
+          "count": 250
+        },
+        {
+          "bin_low": 0.9,
+          "bin_high": 1.0,
+          "predicted_mean": 0.9229,
+          "actual_freq": 0.9059,
+          "count": 85
+        }
+      ]
+    },
+    "poisson": {
+      "n": 5941,
+      "brier_score": 0.582,
+      "log_loss": 0.9866,
+      "accuracy": 0.5268,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0719,
+          "actual_freq": 0.2059,
+          "count": 102
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.147,
+          "actual_freq": 0.1588,
+          "count": 422
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2549,
+          "actual_freq": 0.2235,
+          "count": 358
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3527,
+          "actual_freq": 0.3454,
+          "count": 1106
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4502,
+          "actual_freq": 0.4472,
+          "count": 1534
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5478,
+          "actual_freq": 0.5177,
+          "count": 1155
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.639,
+          "actual_freq": 0.6453,
+          "count": 592
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7487,
+          "actual_freq": 0.7523,
+          "count": 218
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.859,
+          "actual_freq": 0.8412,
+          "count": 359
+        },
+        {
+          "bin_low": 0.9,
+          "bin_high": 1.0,
+          "predicted_mean": 0.9172,
+          "actual_freq": 0.8526,
+          "count": 95
+        }
+      ]
+    },
+    "gradient_boosting": {
+      "n": 5941,
+      "brier_score": 0.6059,
+      "log_loss": 1.0332,
+      "accuracy": 0.5115,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0561,
+          "actual_freq": 0.17,
+          "count": 253
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1527,
+          "actual_freq": 0.2411,
+          "count": 419
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2527,
+          "actual_freq": 0.3059,
+          "count": 595
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3507,
+          "actual_freq": 0.3612,
+          "count": 836
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4523,
+          "actual_freq": 0.4542,
+          "count": 1037
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5476,
+          "actual_freq": 0.4731,
+          "count": 1135
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6459,
+          "actual_freq": 0.5692,
+          "count": 701
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7478,
+          "actual_freq": 0.6932,
+          "count": 414
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8466,
+          "actual_freq": 0.7846,
+          "count": 311
+        },
+        {
+          "bin_low": 0.9,
+          "bin_high": 1.0,
+          "predicted_mean": 0.9512,
+          "actual_freq": 0.8208,
+          "count": 240
+        }
+      ]
+    }
+  },
+  "I1": {
+    "market": {
+      "n": 5910,
+      "brier_score": 0.5698,
+      "log_loss": 0.9594,
+      "accuracy": 0.5465,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0807,
+          "actual_freq": 0.0167,
+          "count": 60
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1583,
+          "actual_freq": 0.1213,
+          "count": 577
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2536,
+          "actual_freq": 0.2103,
+          "count": 856
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.353,
+          "actual_freq": 0.3426,
+          "count": 1112
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.449,
+          "actual_freq": 0.4421,
+          "count": 1183
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5503,
+          "actual_freq": 0.564,
+          "count": 851
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6499,
+          "actual_freq": 0.6599,
+          "count": 688
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7433,
+          "actual_freq": 0.7643,
+          "count": 471
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8236,
+          "actual_freq": 0.8649,
+          "count": 111
+        },
+        {
+          "bin_low": 0.9,
+          "bin_high": 1.0,
+          "predicted_mean": 0.9076,
+          "actual_freq": 1.0,
+          "count": 1
+        }
+      ]
+    },
+    "elo": {
+      "n": 5910,
+      "brier_score": 0.5842,
+      "log_loss": 0.9807,
+      "accuracy": 0.534,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0785,
+          "actual_freq": 0.0909,
+          "count": 66
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1576,
+          "actual_freq": 0.1398,
+          "count": 515
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2511,
+          "actual_freq": 0.2214,
+          "count": 840
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3504,
+          "actual_freq": 0.3529,
+          "count": 1176
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4482,
+          "actual_freq": 0.4546,
+          "count": 1201
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5477,
+          "actual_freq": 0.5311,
+          "count": 932
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6474,
+          "actual_freq": 0.6589,
+          "count": 727
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7418,
+          "actual_freq": 0.7595,
+          "count": 420
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8128,
+          "actual_freq": 0.8485,
+          "count": 33
+        }
+      ]
+    },
+    "logistic_regression": {
+      "n": 5910,
+      "brier_score": 0.5846,
+      "log_loss": 0.9818,
+      "accuracy": 0.5338,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0744,
+          "actual_freq": 0.0847,
+          "count": 118
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1538,
+          "actual_freq": 0.1511,
+          "count": 523
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2503,
+          "actual_freq": 0.2202,
+          "count": 713
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3534,
+          "actual_freq": 0.3286,
+          "count": 977
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4505,
+          "actual_freq": 0.4446,
+          "count": 1138
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5493,
+          "actual_freq": 0.4935,
+          "count": 1001
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6465,
+          "actual_freq": 0.6282,
+          "count": 788
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7419,
+          "actual_freq": 0.6998,
+          "count": 513
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8286,
+          "actual_freq": 0.8986,
+          "count": 138
+        },
+        {
+          "bin_low": 0.9,
+          "bin_high": 1.0,
+          "predicted_mean": 0.9005,
+          "actual_freq": 1.0,
+          "count": 1
+        }
+      ]
+    },
+    "dixon_coles": {
+      "n": 5910,
+      "brier_score": 0.5906,
+      "log_loss": 1.0147,
+      "accuracy": 0.5308,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.055,
+          "actual_freq": 0.1348,
+          "count": 89
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.158,
+          "actual_freq": 0.1347,
+          "count": 542
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2519,
+          "actual_freq": 0.2599,
+          "count": 831
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3486,
+          "actual_freq": 0.3616,
+          "count": 1272
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4478,
+          "actual_freq": 0.4554,
+          "count": 1111
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5473,
+          "actual_freq": 0.5206,
+          "count": 849
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6463,
+          "actual_freq": 0.6515,
+          "count": 749
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7434,
+          "actual_freq": 0.7114,
+          "count": 343
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8352,
+          "actual_freq": 0.8598,
+          "count": 107
+        },
+        {
+          "bin_low": 0.9,
+          "bin_high": 1.0,
+          "predicted_mean": 0.9526,
+          "actual_freq": 0.7647,
+          "count": 17
+        }
+      ]
+    },
+    "poisson": {
+      "n": 5910,
+      "brier_score": 0.5983,
+      "log_loss": 1.0239,
+      "accuracy": 0.519,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0344,
+          "actual_freq": 0.1818,
+          "count": 44
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1657,
+          "actual_freq": 0.1367,
+          "count": 300
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.256,
+          "actual_freq": 0.2026,
+          "count": 765
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3493,
+          "actual_freq": 0.3426,
+          "count": 1293
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4483,
+          "actual_freq": 0.427,
+          "count": 1260
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5476,
+          "actual_freq": 0.5398,
+          "count": 1004
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6454,
+          "actual_freq": 0.6132,
+          "count": 804
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.738,
+          "actual_freq": 0.7341,
+          "count": 346
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8373,
+          "actual_freq": 0.7722,
+          "count": 79
+        },
+        {
+          "bin_low": 0.9,
+          "bin_high": 1.0,
+          "predicted_mean": 0.9539,
+          "actual_freq": 0.7333,
+          "count": 15
+        }
+      ]
+    },
+    "gradient_boosting": {
+      "n": 5910,
+      "brier_score": 0.6119,
+      "log_loss": 1.0406,
+      "accuracy": 0.5203,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.059,
+          "actual_freq": 0.1388,
+          "count": 281
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1523,
+          "actual_freq": 0.1989,
+          "count": 568
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2503,
+          "actual_freq": 0.2568,
+          "count": 701
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.354,
+          "actual_freq": 0.3564,
+          "count": 721
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4534,
+          "actual_freq": 0.4397,
+          "count": 1228
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5475,
+          "actual_freq": 0.524,
+          "count": 958
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6465,
+          "actual_freq": 0.571,
+          "count": 704
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7434,
+          "actual_freq": 0.6346,
+          "count": 416
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8487,
+          "actual_freq": 0.7269,
+          "count": 216
+        },
+        {
+          "bin_low": 0.9,
+          "bin_high": 1.0,
+          "predicted_mean": 0.9371,
+          "actual_freq": 0.7863,
+          "count": 117
+        }
+      ]
+    }
+  },
+  "D1": {
+    "market": {
+      "n": 4658,
+      "brier_score": 0.5828,
+      "log_loss": 0.9793,
+      "accuracy": 0.5243,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0778,
+          "actual_freq": 0.0625,
+          "count": 96
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1534,
+          "actual_freq": 0.1938,
+          "count": 325
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2562,
+          "actual_freq": 0.2726,
+          "count": 521
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3555,
+          "actual_freq": 0.3387,
+          "count": 989
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.449,
+          "actual_freq": 0.4384,
+          "count": 1120
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5495,
+          "actual_freq": 0.5662,
+          "count": 710
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6486,
+          "actual_freq": 0.6521,
+          "count": 457
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.747,
+          "actual_freq": 0.7678,
+          "count": 267
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8424,
+          "actual_freq": 0.8155,
+          "count": 168
+        },
+        {
+          "bin_low": 0.9,
+          "bin_high": 1.0,
+          "predicted_mean": 0.9138,
+          "actual_freq": 1.0,
+          "count": 5
+        }
+      ]
+    },
+    "elo": {
+      "n": 4658,
+      "brier_score": 0.5938,
+      "log_loss": 0.9952,
+      "accuracy": 0.5077,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0793,
+          "actual_freq": 0.0517,
+          "count": 58
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.156,
+          "actual_freq": 0.1783,
+          "count": 314
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2541,
+          "actual_freq": 0.2995,
+          "count": 631
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3533,
+          "actual_freq": 0.3564,
+          "count": 1013
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4494,
+          "actual_freq": 0.4413,
+          "count": 1047
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5462,
+          "actual_freq": 0.5581,
+          "count": 801
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6463,
+          "actual_freq": 0.6746,
+          "count": 504
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7448,
+          "actual_freq": 0.7727,
+          "count": 264
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8092,
+          "actual_freq": 0.8462,
+          "count": 26
+        }
+      ]
+    },
+    "logistic_regression": {
+      "n": 4658,
+      "brier_score": 0.5962,
+      "log_loss": 0.9987,
+      "accuracy": 0.5047,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0799,
+          "actual_freq": 0.0784,
+          "count": 51
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1557,
+          "actual_freq": 0.166,
+          "count": 259
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2546,
+          "actual_freq": 0.2671,
+          "count": 554
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3539,
+          "actual_freq": 0.3716,
+          "count": 888
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.448,
+          "actual_freq": 0.4,
+          "count": 1075
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5458,
+          "actual_freq": 0.5349,
+          "count": 916
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6441,
+          "actual_freq": 0.643,
+          "count": 577
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7454,
+          "actual_freq": 0.7815,
+          "count": 270
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8292,
+          "actual_freq": 0.8382,
+          "count": 68
+        }
+      ]
+    },
+    "poisson": {
+      "n": 4658,
+      "brier_score": 0.5985,
+      "log_loss": 1.0029,
+      "accuracy": 0.5052,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.083,
+          "actual_freq": 0.0769,
+          "count": 52
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1502,
+          "actual_freq": 0.1929,
+          "count": 280
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.255,
+          "actual_freq": 0.2723,
+          "count": 470
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3527,
+          "actual_freq": 0.3576,
+          "count": 906
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4493,
+          "actual_freq": 0.4313,
+          "count": 1296
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5447,
+          "actual_freq": 0.5144,
+          "count": 797
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6445,
+          "actual_freq": 0.6332,
+          "count": 398
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7452,
+          "actual_freq": 0.7302,
+          "count": 278
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8398,
+          "actual_freq": 0.8333,
+          "count": 168
+        },
+        {
+          "bin_low": 0.9,
+          "bin_high": 1.0,
+          "predicted_mean": 0.9209,
+          "actual_freq": 0.7692,
+          "count": 13
+        }
+      ]
+    },
+    "dixon_coles": {
+      "n": 4658,
+      "brier_score": 0.598,
+      "log_loss": 1.0042,
+      "accuracy": 0.5052,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0715,
+          "actual_freq": 0.1339,
+          "count": 127
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1557,
+          "actual_freq": 0.1974,
+          "count": 304
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2536,
+          "actual_freq": 0.3012,
+          "count": 561
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.352,
+          "actual_freq": 0.3677,
+          "count": 1017
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4509,
+          "actual_freq": 0.4265,
+          "count": 987
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5477,
+          "actual_freq": 0.5243,
+          "count": 761
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.646,
+          "actual_freq": 0.6651,
+          "count": 424
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7473,
+          "actual_freq": 0.7394,
+          "count": 284
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8433,
+          "actual_freq": 0.7778,
+          "count": 162
+        },
+        {
+          "bin_low": 0.9,
+          "bin_high": 1.0,
+          "predicted_mean": 0.9258,
+          "actual_freq": 0.8387,
+          "count": 31
+        }
+      ]
+    },
+    "gradient_boosting": {
+      "n": 4658,
+      "brier_score": 0.6258,
+      "log_loss": 1.0585,
+      "accuracy": 0.4749,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0582,
+          "actual_freq": 0.1667,
+          "count": 132
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1529,
+          "actual_freq": 0.2241,
+          "count": 232
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2538,
+          "actual_freq": 0.3316,
+          "count": 561
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3543,
+          "actual_freq": 0.3876,
+          "count": 1045
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4459,
+          "actual_freq": 0.4199,
+          "count": 967
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5478,
+          "actual_freq": 0.4993,
+          "count": 683
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6451,
+          "actual_freq": 0.5743,
+          "count": 404
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7451,
+          "actual_freq": 0.6385,
+          "count": 296
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8446,
+          "actual_freq": 0.7395,
+          "count": 215
+        },
+        {
+          "bin_low": 0.9,
+          "bin_high": 1.0,
+          "predicted_mean": 0.9394,
+          "actual_freq": 0.748,
+          "count": 123
+        }
+      ]
+    }
+  },
+  "F1": {
+    "market": {
+      "n": 5567,
+      "brier_score": 0.5916,
+      "log_loss": 0.9904,
+      "accuracy": 0.5202,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0821,
+          "actual_freq": 0.0469,
+          "count": 64
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1593,
+          "actual_freq": 0.1478,
+          "count": 291
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2572,
+          "actual_freq": 0.236,
+          "count": 750
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3568,
+          "actual_freq": 0.3478,
+          "count": 1173
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4493,
+          "actual_freq": 0.4694,
+          "count": 1453
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5475,
+          "actual_freq": 0.5286,
+          "count": 927
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6491,
+          "actual_freq": 0.6703,
+          "count": 549
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7446,
+          "actual_freq": 0.7692,
+          "count": 260
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8402,
+          "actual_freq": 0.8776,
+          "count": 98
+        },
+        {
+          "bin_low": 0.9,
+          "bin_high": 1.0,
+          "predicted_mean": 0.9124,
+          "actual_freq": 1.0,
+          "count": 2
+        }
+      ]
+    },
+    "elo": {
+      "n": 5567,
+      "brier_score": 0.6056,
+      "log_loss": 1.0117,
+      "accuracy": 0.5053,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0807,
+          "actual_freq": 0.119,
+          "count": 42
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1596,
+          "actual_freq": 0.156,
+          "count": 282
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2551,
+          "actual_freq": 0.2662,
+          "count": 800
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3535,
+          "actual_freq": 0.3648,
+          "count": 1217
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4482,
+          "actual_freq": 0.461,
+          "count": 1410
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5473,
+          "actual_freq": 0.5445,
+          "count": 977
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6437,
+          "actual_freq": 0.6286,
+          "count": 587
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7408,
+          "actual_freq": 0.7924,
+          "count": 236
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8113,
+          "actual_freq": 0.9375,
+          "count": 16
+        }
+      ]
+    },
+    "logistic_regression": {
+      "n": 5567,
+      "brier_score": 0.6061,
+      "log_loss": 1.0131,
+      "accuracy": 0.5037,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0793,
+          "actual_freq": 0.1111,
+          "count": 45
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1579,
+          "actual_freq": 0.1725,
+          "count": 255
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2546,
+          "actual_freq": 0.2621,
+          "count": 683
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3539,
+          "actual_freq": 0.3372,
+          "count": 1112
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4496,
+          "actual_freq": 0.4574,
+          "count": 1480
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5462,
+          "actual_freq": 0.5209,
+          "count": 1102
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6438,
+          "actual_freq": 0.6203,
+          "count": 611
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7425,
+          "actual_freq": 0.8017,
+          "count": 242
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8264,
+          "actual_freq": 0.8649,
+          "count": 37
+        }
+      ]
+    },
+    "dixon_coles": {
+      "n": 5567,
+      "brier_score": 0.611,
+      "log_loss": 1.0333,
+      "accuracy": 0.5039,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0555,
+          "actual_freq": 0.1935,
+          "count": 62
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1578,
+          "actual_freq": 0.2038,
+          "count": 265
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2555,
+          "actual_freq": 0.2801,
+          "count": 789
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3519,
+          "actual_freq": 0.3566,
+          "count": 1287
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4475,
+          "actual_freq": 0.4614,
+          "count": 1348
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5466,
+          "actual_freq": 0.5552,
+          "count": 924
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6453,
+          "actual_freq": 0.6015,
+          "count": 532
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7447,
+          "actual_freq": 0.6709,
+          "count": 237
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8387,
+          "actual_freq": 0.787,
+          "count": 108
+        },
+        {
+          "bin_low": 0.9,
+          "bin_high": 1.0,
+          "predicted_mean": 0.9179,
+          "actual_freq": 0.9333,
+          "count": 15
+        }
+      ]
+    },
+    "poisson": {
+      "n": 5567,
+      "brier_score": 0.6155,
+      "log_loss": 1.0443,
+      "accuracy": 0.494,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0301,
+          "actual_freq": 0.2917,
+          "count": 24
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1626,
+          "actual_freq": 0.1689,
+          "count": 148
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2633,
+          "actual_freq": 0.2587,
+          "count": 603
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3531,
+          "actual_freq": 0.3434,
+          "count": 1363
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4496,
+          "actual_freq": 0.4505,
+          "count": 1494
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.546,
+          "actual_freq": 0.5333,
+          "count": 1050
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6422,
+          "actual_freq": 0.6089,
+          "count": 583
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.742,
+          "actual_freq": 0.7048,
+          "count": 227
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8373,
+          "actual_freq": 0.7324,
+          "count": 71
+        },
+        {
+          "bin_low": 0.9,
+          "bin_high": 1.0,
+          "predicted_mean": 0.9205,
+          "actual_freq": 0.75,
+          "count": 4
+        }
+      ]
+    },
+    "gradient_boosting": {
+      "n": 5567,
+      "brier_score": 0.6309,
+      "log_loss": 1.0635,
+      "accuracy": 0.4766,
+      "calibration_home_win": [
+        {
+          "bin_low": 0.0,
+          "bin_high": 0.1,
+          "predicted_mean": 0.0633,
+          "actual_freq": 0.1711,
+          "count": 152
+        },
+        {
+          "bin_low": 0.1,
+          "bin_high": 0.2,
+          "predicted_mean": 0.1555,
+          "actual_freq": 0.242,
+          "count": 405
+        },
+        {
+          "bin_low": 0.2,
+          "bin_high": 0.3,
+          "predicted_mean": 0.2532,
+          "actual_freq": 0.3071,
+          "count": 687
+        },
+        {
+          "bin_low": 0.3,
+          "bin_high": 0.4,
+          "predicted_mean": 0.3517,
+          "actual_freq": 0.3869,
+          "count": 946
+        },
+        {
+          "bin_low": 0.4,
+          "bin_high": 0.5,
+          "predicted_mean": 0.4499,
+          "actual_freq": 0.453,
+          "count": 1448
+        },
+        {
+          "bin_low": 0.5,
+          "bin_high": 0.6,
+          "predicted_mean": 0.5444,
+          "actual_freq": 0.4934,
+          "count": 914
+        },
+        {
+          "bin_low": 0.6,
+          "bin_high": 0.7,
+          "predicted_mean": 0.6467,
+          "actual_freq": 0.5688,
+          "count": 494
+        },
+        {
+          "bin_low": 0.7,
+          "bin_high": 0.8,
+          "predicted_mean": 0.7434,
+          "actual_freq": 0.663,
+          "count": 270
+        },
+        {
+          "bin_low": 0.8,
+          "bin_high": 0.9,
+          "predicted_mean": 0.8485,
+          "actual_freq": 0.7202,
+          "count": 168
+        },
+        {
+          "bin_low": 0.9,
+          "bin_high": 1.0,
+          "predicted_mean": 0.9406,
+          "actual_freq": 0.8434,
+          "count": 83
+        }
+      ]
+    }
+  }
+}

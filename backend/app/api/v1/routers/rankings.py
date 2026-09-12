@@ -5,11 +5,11 @@ from sqlalchemy.orm import Session
 
 from app.api.v1.deps import get_league_or_404, get_membership
 from app.db.session import get_db
-from app.models.enums import PredictionStatus, StreakType
+from app.models.bet import Bet, BetLeg, Wallet
+from app.models.enums import BetStatus, StreakType
 from app.models.gameweek import Gameweek
 from app.models.gamification import Badge, UserBadge, UserStreak
 from app.models.league import League, LeagueMembership
-from app.models.prediction import Prediction, Wallet
 from app.models.user import User
 from app.schemas.ranking import GameweekResultSummary, RankingRow
 from app.services import gameweeks as gameweeks_service
@@ -70,8 +70,13 @@ def get_result_summary(
     previous_position = positions_before.get(user_id)
     positions_gained = (previous_position - position) if previous_position else 0
 
-    picks = db.query(Prediction).filter(Prediction.gameweek_id == gameweek.id, Prediction.user_id == user_id).all()
-    correct_picks = sum(1 for p in picks if p.status == PredictionStatus.WON)
+    picks = (
+        db.query(BetLeg)
+        .join(Bet, Bet.id == BetLeg.bet_id)
+        .filter(Bet.gameweek_id == gameweek.id, Bet.user_id == user_id)
+        .all()
+    )
+    correct_picks = sum(1 for p in picks if p.status == BetStatus.WON)
 
     streak = (
         db.query(UserStreak)

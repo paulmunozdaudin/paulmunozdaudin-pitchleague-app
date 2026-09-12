@@ -4,16 +4,27 @@ def _create_and_join_league(client, alice_headers, bob_headers):
     return league
 
 
-def test_cancel_prediction_refunds_wallet(client, alice_headers, bob_headers):
+def test_cancel_bet_refunds_wallet(client, alice_headers, bob_headers):
     league = _create_and_join_league(client, alice_headers, bob_headers)
     gameweek = client.post(
         f"/api/v1/leagues/{league['id']}/gameweeks/generate-next", headers=alice_headers
     ).json()
     match = gameweek["matches"][0]
+    winner_home = next(o for o in match["odds"] if o["market"] == "winner" and o["selection"] == "home")
 
     placed = client.post(
-        f"/api/v1/leagues/{league['id']}/gameweeks/{gameweek['id']}/predictions",
-        json={"match_id": match["id"], "market": "winner", "selection": "home", "stake": 3000},
+        f"/api/v1/leagues/{league['id']}/gameweeks/{gameweek['id']}/bets",
+        json={
+            "stake": 3000,
+            "legs": [
+                {
+                    "match_id": match["id"],
+                    "market": "winner",
+                    "selection": "home",
+                    "expected_price": winner_home["price"],
+                }
+            ],
+        },
         headers=alice_headers,
     ).json()
 
@@ -21,7 +32,7 @@ def test_cancel_prediction_refunds_wallet(client, alice_headers, bob_headers):
     assert after_stake["my_wallet_balance"] == after_stake["my_wallet_starting"] - 3000
 
     cancel_resp = client.delete(
-        f"/api/v1/leagues/{league['id']}/gameweeks/{gameweek['id']}/predictions/{placed['id']}",
+        f"/api/v1/leagues/{league['id']}/gameweeks/{gameweek['id']}/bets/{placed['id']}",
         headers=alice_headers,
     )
     assert cancel_resp.status_code == 204

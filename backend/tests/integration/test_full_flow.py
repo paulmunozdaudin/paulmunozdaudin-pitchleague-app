@@ -61,41 +61,134 @@ def _generate_gameweek(client, league_id, alice_headers):
     return resp.json()
 
 
-def test_prediction_budget_enforced_and_stake_locks_funds(client, alice_headers, bob_headers):
+def _winner_home_quote(match):
+    return next(o for o in match["odds"] if o["market"] == "winner" and o["selection"] == "home")
+
+
+def test_bet_budget_enforced_and_stake_locks_funds(client, alice_headers, bob_headers):
     league = _create_and_join_league(client, alice_headers, bob_headers)
     gameweek = _generate_gameweek(client, league["id"], alice_headers)
     match = gameweek["matches"][0]
-    winner_home = next(o for o in match["odds"] if o["market"] == "winner" and o["selection"] == "home")
+    winner_home = _winner_home_quote(match)
 
     over_budget = client.post(
-        f"/api/v1/leagues/{league['id']}/gameweeks/{gameweek['id']}/predictions",
-        json={"match_id": match["id"], "market": "winner", "selection": "home", "stake": 999_999},
+        f"/api/v1/leagues/{league['id']}/gameweeks/{gameweek['id']}/bets",
+        json={
+            "stake": 999_999,
+            "legs": [
+                {
+                    "match_id": match["id"],
+                    "market": "winner",
+                    "selection": "home",
+                    "expected_price": winner_home["price"],
+                }
+            ],
+        },
         headers=alice_headers,
     )
     assert over_budget.status_code == 400
 
     placed = client.post(
-        f"/api/v1/leagues/{league['id']}/gameweeks/{gameweek['id']}/predictions",
-        json={"match_id": match["id"], "market": "winner", "selection": "home", "stake": 2500},
+        f"/api/v1/leagues/{league['id']}/gameweeks/{gameweek['id']}/bets",
+        json={
+            "stake": 2500,
+            "legs": [
+                {
+                    "match_id": match["id"],
+                    "market": "winner",
+                    "selection": "home",
+                    "expected_price": winner_home["price"],
+                }
+            ],
+        },
         headers=alice_headers,
     )
     assert placed.status_code == 200
     body = placed.json()
     assert body["stake"] == 2500
-    assert float(body["odds_price_at_pick"]) == float(winner_home["price"])
+    assert float(body["combined_odds"]) == float(winner_home["price"])
+    bet_id = body["id"]
 
     current = client.get(f"/api/v1/leagues/{league['id']}/gameweeks/current", headers=alice_headers).json()
     assert current["my_wallet_balance"] == current["my_wallet_starting"] - 2500
 
-    # Re-picking the same match overwrites the previous stake instead of stacking it.
-    updated = client.post(
-        f"/api/v1/leagues/{league['id']}/gameweeks/{gameweek['id']}/predictions",
-        json={"match_id": match["id"], "market": "winner", "selection": "away", "stake": 1000},
+    # Placing a second, separate bet debits the same shared weekly wallet.
+    second = client.post(
+        f"/api/v1/leagues/{league['id']}/gameweeks/{gameweek['id']}/bets",
+        json={
+            "stake": 1000,
+            "legs": [
+                {
+                    "match_id": match["id"],
+                    "market": "double_chance",
+                    "selection": "home_or_draw",
+                    "expected_price": next(
+                        o for o in match["odds"] if o["market"] == "double_chance" and o["selection"] == "home_or_draw"
+                    )["price"],
+                }
+            ],
+        },
         headers=alice_headers,
     )
-    assert updated.status_code == 200
+    assert second.status_code == 200
     current_after = client.get(f"/api/v1/leagues/{league['id']}/gameweeks/current", headers=alice_headers).json()
-    assert current_after["my_wallet_balance"] == current_after["my_wallet_starting"] - 1000
+    assert current_after["my_wallet_balance"] == current_after["my_wallet_starting"] - 2500 - 1000
+
+    # Cancelling the first bet refunds only its own stake.
+    cancel = client.delete(
+        f"/api/v1/leagues/{league['id']}/gameweeks/{gameweek['id']}/bets/{bet_id}", headers=alice_headers
+    )
+    assert cancel.status_code == 204
+    current_final = client.get(f"/api/v1/leagues/{league['id']}/gameweeks/current", headers=alice_headers).json()
+    assert current_final["my_wallet_balance"] == current_final["my_wallet_starting"] - 1000
+
+
+def test_combination_bet_rejects_duplicate_match_and_stale_odds(client, alice_headers):
+    league = client.post("/api/v1/leagues", json={"name": "Liga Combos"}, headers=alice_headers).json()
+    gameweek = _generate_gameweek(client, league["id"], alice_headers)
+    match_a, match_b = gameweek["matches"][0], gameweek["matches"][1]
+    quote_a, quote_b = _winner_home_quote(match_a), _winner_home_quote(match_b)
+
+    duplicate = client.post(
+        f"/api/v1/leagues/{league['id']}/gameweeks/{gameweek['id']}/bets",
+        json={
+            "stake": 1000,
+            "legs": [
+                {"match_id": match_a["id"], "market": "winner", "selection": "home", "expected_price": quote_a["price"]},
+                {"match_id": match_a["id"], "market": "double_chance", "selection": "home_or_draw", "expected_price": "1.10"},
+            ],
+        },
+        headers=alice_headers,
+    )
+    assert duplicate.status_code == 400
+
+    stale = client.post(
+        f"/api/v1/leagues/{league['id']}/gameweeks/{gameweek['id']}/bets",
+        json={
+            "stake": 1000,
+            "legs": [{"match_id": match_a["id"], "market": "winner", "selection": "home", "expected_price": "999.99"}],
+        },
+        headers=alice_headers,
+    )
+    assert stale.status_code == 409
+    assert "expected_price" in stale.json()["detail"]
+
+    combo = client.post(
+        f"/api/v1/leagues/{league['id']}/gameweeks/{gameweek['id']}/bets",
+        json={
+            "stake": 1000,
+            "legs": [
+                {"match_id": match_a["id"], "market": "winner", "selection": "home", "expected_price": quote_a["price"]},
+                {"match_id": match_b["id"], "market": "winner", "selection": "home", "expected_price": quote_b["price"]},
+            ],
+        },
+        headers=alice_headers,
+    )
+    assert combo.status_code == 200
+    body = combo.json()
+    expected_combined = round(float(quote_a["price"]) * float(quote_b["price"]), 2)
+    assert float(body["combined_odds"]) == expected_combined
+    assert len(body["legs"]) == 2
 
 
 def test_settlement_pays_out_and_updates_ranking(client, db_session, alice_headers, bob_headers):
@@ -103,11 +196,21 @@ def test_settlement_pays_out_and_updates_ranking(client, db_session, alice_heade
     gameweek = _generate_gameweek(client, league["id"], alice_headers)
 
     for match in gameweek["matches"]:
-        winner_home = next(o for o in match["odds"] if o["market"] == "winner" and o["selection"] == "home")
+        winner_home = _winner_home_quote(match)
         for headers in (alice_headers, bob_headers):
             client.post(
-                f"/api/v1/leagues/{league['id']}/gameweeks/{gameweek['id']}/predictions",
-                json={"match_id": match["id"], "market": "winner", "selection": "home", "stake": 1000},
+                f"/api/v1/leagues/{league['id']}/gameweeks/{gameweek['id']}/bets",
+                json={
+                    "stake": 1000,
+                    "legs": [
+                        {
+                            "match_id": match["id"],
+                            "market": "winner",
+                            "selection": "home",
+                            "expected_price": winner_home["price"],
+                        }
+                    ],
+                },
                 headers=headers,
             )
 
@@ -142,8 +245,11 @@ def test_settlement_pays_out_and_updates_ranking(client, db_session, alice_heade
     ).json()
     assert summary["total_picks"] == len(gameweek["matches"])
 
+    activity = client.get(f"/api/v1/leagues/{league['id']}/activity", headers=alice_headers).json()
+    assert any(a["type"] == "bet_placed" for a in activity)
 
-def test_match_insight_uses_heuristic_fallback(client, alice_headers, bob_headers):
+
+def test_match_insight_falls_back_to_market_when_no_model_is_trained(client, alice_headers, bob_headers):
     league = _create_and_join_league(client, alice_headers, bob_headers)
     gameweek = _generate_gameweek(client, league["id"], alice_headers)
     match = gameweek["matches"][0]
@@ -152,4 +258,7 @@ def test_match_insight_uses_heuristic_fallback(client, alice_headers, bob_header
     assert resp.status_code == 200
     body = resp.json()
     assert body["provider"] == "heuristic"
-    assert match["home_team"] in body["summary"]
+    # No ModelVersion exists in this fresh test database, so the engine
+    # must fall back to the de-vigged market price rather than fabricate one.
+    assert body["model"]["source"] == "market"
+    assert body["summary"]

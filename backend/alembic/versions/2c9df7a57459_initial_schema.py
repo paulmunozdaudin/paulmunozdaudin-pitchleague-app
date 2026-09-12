@@ -1,8 +1,8 @@
 """initial schema
 
-Revision ID: 3b985ec2c3da
+Revision ID: 2c9df7a57459
 Revises: 
-Create Date: 2026-09-10 15:26:14.809204
+Create Date: 2026-09-12 15:25:21.880528
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '3b985ec2c3da'
+revision: str = '2c9df7a57459'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -29,6 +29,27 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('code')
     )
+    op.create_table('model_versions',
+    sa.Column('division', sa.String(length=10), nullable=False),
+    sa.Column('model_name', sa.String(length=40), nullable=False),
+    sa.Column('trained_at', sa.DateTime(), nullable=False),
+    sa.Column('artifact_path', sa.String(length=255), nullable=False),
+    sa.Column('metrics', sa.JSON(), nullable=False),
+    sa.Column('is_active', sa.Boolean(), nullable=False),
+    sa.Column('id', sa.Uuid(), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_model_versions_division'), 'model_versions', ['division'], unique=False)
+    op.create_table('team_ratings',
+    sa.Column('division', sa.String(length=10), nullable=False),
+    sa.Column('team', sa.String(length=120), nullable=False),
+    sa.Column('rating', sa.Float(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.Column('id', sa.Uuid(), nullable=False),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('division', 'team', name='uq_team_rating_division_team')
+    )
+    op.create_index(op.f('ix_team_ratings_division'), 'team_ratings', ['division'], unique=False)
     op.create_table('users',
     sa.Column('email', sa.String(length=320), nullable=False),
     sa.Column('name', sa.String(length=120), nullable=False),
@@ -43,9 +64,11 @@ def upgrade() -> None:
     op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)
     op.create_table('leagues',
     sa.Column('name', sa.String(length=80), nullable=False),
+    sa.Column('avatar_emoji', sa.String(length=10), nullable=False),
     sa.Column('invite_code', sa.String(length=10), nullable=False),
     sa.Column('admin_user_id', sa.Uuid(), nullable=False),
     sa.Column('budget_per_gameweek', sa.Integer(), nullable=False),
+    sa.Column('max_players', sa.Integer(), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
@@ -65,6 +88,18 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('user_id')
     )
+    op.create_table('league_activity',
+    sa.Column('league_id', sa.Uuid(), nullable=False),
+    sa.Column('user_id', sa.Uuid(), nullable=False),
+    sa.Column('type', sa.Enum('BET_PLACED', 'STREAK_MILESTONE', 'BADGE_EARNED', 'GAMEWEEK_SETTLED', name='activitytype'), nullable=False),
+    sa.Column('data', sa.JSON(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('id', sa.Uuid(), nullable=False),
+    sa.ForeignKeyConstraint(['league_id'], ['leagues.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_league_activity_league_id'), 'league_activity', ['league_id'], unique=False)
     op.create_table('league_memberships',
     sa.Column('league_id', sa.Uuid(), nullable=False),
     sa.Column('user_id', sa.Uuid(), nullable=False),
@@ -132,6 +167,25 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['season_id'], ['seasons.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('bets',
+    sa.Column('user_id', sa.Uuid(), nullable=False),
+    sa.Column('league_id', sa.Uuid(), nullable=False),
+    sa.Column('gameweek_id', sa.Uuid(), nullable=False),
+    sa.Column('stake', sa.Integer(), nullable=False),
+    sa.Column('combined_odds', sa.Numeric(precision=10, scale=2), nullable=False),
+    sa.Column('potential_payout', sa.Integer(), nullable=False),
+    sa.Column('status', sa.Enum('PENDING', 'WON', 'LOST', 'VOID', name='betstatus'), nullable=False),
+    sa.Column('payout', sa.Integer(), nullable=True),
+    sa.Column('settled_at', sa.DateTime(), nullable=True),
+    sa.Column('id', sa.Uuid(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.ForeignKeyConstraint(['gameweek_id'], ['gameweeks.id'], ),
+    sa.ForeignKeyConstraint(['league_id'], ['leagues.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_bets_user_id'), 'bets', ['user_id'], unique=False)
     op.create_table('challenges',
     sa.Column('gameweek_id', sa.Uuid(), nullable=False),
     sa.Column('code', sa.String(length=40), nullable=False),
@@ -189,6 +243,22 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('user_id', 'league_id', 'gameweek_id', name='uq_wallet_user_league_gameweek')
     )
+    op.create_table('bet_legs',
+    sa.Column('bet_id', sa.Uuid(), nullable=False),
+    sa.Column('match_id', sa.Uuid(), nullable=False),
+    sa.Column('market', sa.Enum('WINNER', 'DOUBLE_CHANCE', 'OVER_UNDER', 'BOTH_TEAMS_TO_SCORE', name='market'), nullable=False),
+    sa.Column('selection', sa.Enum('HOME', 'DRAW', 'AWAY', 'HOME_OR_DRAW', 'AWAY_OR_DRAW', 'HOME_OR_AWAY', 'OVER', 'UNDER', 'YES', 'NO', name='selection'), nullable=False),
+    sa.Column('line', sa.Numeric(precision=5, scale=2), nullable=True),
+    sa.Column('odds_price_at_pick', sa.Numeric(precision=6, scale=2), nullable=False),
+    sa.Column('status', sa.Enum('PENDING', 'WON', 'LOST', 'VOID', name='betstatus'), nullable=False),
+    sa.Column('id', sa.Uuid(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.ForeignKeyConstraint(['bet_id'], ['bets.id'], ),
+    sa.ForeignKeyConstraint(['match_id'], ['matches.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('bet_id', 'match_id', name='uq_bet_leg_bet_match')
+    )
     op.create_table('odds_snapshots',
     sa.Column('match_id', sa.Uuid(), nullable=False),
     sa.Column('market', sa.Enum('WINNER', 'DOUBLE_CHANCE', 'OVER_UNDER', 'BOTH_TEAMS_TO_SCORE', name='market'), nullable=False),
@@ -202,30 +272,6 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_odds_snapshots_fetched_at'), 'odds_snapshots', ['fetched_at'], unique=False)
-    op.create_table('predictions',
-    sa.Column('user_id', sa.Uuid(), nullable=False),
-    sa.Column('league_id', sa.Uuid(), nullable=False),
-    sa.Column('gameweek_id', sa.Uuid(), nullable=False),
-    sa.Column('match_id', sa.Uuid(), nullable=False),
-    sa.Column('market', sa.Enum('WINNER', 'DOUBLE_CHANCE', 'OVER_UNDER', 'BOTH_TEAMS_TO_SCORE', name='market'), nullable=False),
-    sa.Column('selection', sa.Enum('HOME', 'DRAW', 'AWAY', 'HOME_OR_DRAW', 'AWAY_OR_DRAW', 'HOME_OR_AWAY', 'OVER', 'UNDER', 'YES', 'NO', name='selection'), nullable=False),
-    sa.Column('line', sa.Numeric(precision=5, scale=2), nullable=True),
-    sa.Column('odds_price_at_pick', sa.Numeric(precision=6, scale=2), nullable=False),
-    sa.Column('stake', sa.Integer(), nullable=False),
-    sa.Column('potential_payout', sa.Integer(), nullable=False),
-    sa.Column('status', sa.Enum('PENDING', 'WON', 'LOST', 'VOID', name='predictionstatus'), nullable=False),
-    sa.Column('payout', sa.Integer(), nullable=True),
-    sa.Column('settled_at', sa.DateTime(), nullable=True),
-    sa.Column('id', sa.Uuid(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
-    sa.Column('updated_at', sa.DateTime(), nullable=False),
-    sa.ForeignKeyConstraint(['gameweek_id'], ['gameweeks.id'], ),
-    sa.ForeignKeyConstraint(['league_id'], ['leagues.id'], ),
-    sa.ForeignKeyConstraint(['match_id'], ['matches.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('user_id', 'league_id', 'match_id', name='uq_prediction_user_league_match')
-    )
     op.create_table('user_challenges',
     sa.Column('user_id', sa.Uuid(), nullable=False),
     sa.Column('challenge_id', sa.Uuid(), nullable=False),
@@ -243,24 +289,32 @@ def upgrade() -> None:
 def downgrade() -> None:
     # ### commands auto generated by Alembic - please adjust! ###
     op.drop_table('user_challenges')
-    op.drop_table('predictions')
     op.drop_index(op.f('ix_odds_snapshots_fetched_at'), table_name='odds_snapshots')
     op.drop_table('odds_snapshots')
+    op.drop_table('bet_legs')
     op.drop_table('wallets')
     op.drop_table('user_badges')
     op.drop_index(op.f('ix_matches_external_id'), table_name='matches')
     op.drop_table('matches')
     op.drop_table('challenges')
+    op.drop_index(op.f('ix_bets_user_id'), table_name='bets')
+    op.drop_table('bets')
     op.drop_table('gameweeks')
     op.drop_table('user_streaks')
     op.drop_table('seasons')
     op.drop_index(op.f('ix_notifications_user_id'), table_name='notifications')
     op.drop_table('notifications')
     op.drop_table('league_memberships')
+    op.drop_index(op.f('ix_league_activity_league_id'), table_name='league_activity')
+    op.drop_table('league_activity')
     op.drop_table('user_xp')
     op.drop_index(op.f('ix_leagues_invite_code'), table_name='leagues')
     op.drop_table('leagues')
     op.drop_index(op.f('ix_users_email'), table_name='users')
     op.drop_table('users')
+    op.drop_index(op.f('ix_team_ratings_division'), table_name='team_ratings')
+    op.drop_table('team_ratings')
+    op.drop_index(op.f('ix_model_versions_division'), table_name='model_versions')
+    op.drop_table('model_versions')
     op.drop_table('badges')
     # ### end Alembic commands ###

@@ -13,7 +13,7 @@ export type Selection =
 export type MatchStatus = "scheduled" | "live" | "finished" | "postponed";
 export type MatchOutcome = "home" | "draw" | "away";
 export type GameweekStatus = "upcoming" | "open" | "locked" | "settled";
-export type PredictionStatus = "pending" | "won" | "lost" | "void";
+export type BetStatus = "pending" | "won" | "lost" | "void";
 
 export interface User {
   id: string;
@@ -25,9 +25,11 @@ export interface User {
 export interface League {
   id: string;
   name: string;
+  avatar_emoji: string;
   invite_code: string;
   admin_user_id: string;
   budget_per_gameweek: number;
+  max_players: number;
   member_count: number;
   is_admin: boolean;
 }
@@ -50,17 +52,34 @@ export interface Odds {
   fetched_at: string;
 }
 
-export interface Prediction {
+export interface MatchLegSummary {
+  bet_id: string;
+  market: Market;
+  selection: Selection;
+  line: string | null;
+  odds_price_at_pick: string;
+  status: BetStatus;
+}
+
+export interface BetLeg {
   id: string;
   match_id: string;
   market: Market;
   selection: Selection;
   line: string | null;
   odds_price_at_pick: string;
+  status: BetStatus;
+}
+
+export interface Bet {
+  id: string;
   stake: number;
+  combined_odds: string;
   potential_payout: number;
-  status: PredictionStatus;
+  status: BetStatus;
   payout: number | null;
+  created_at: string;
+  legs: BetLeg[];
 }
 
 export interface Match {
@@ -75,7 +94,7 @@ export interface Match {
   result: MatchOutcome | null;
   odds: Odds[];
   is_locked: boolean;
-  my_prediction: Prediction | null;
+  my_legs: MatchLegSummary[];
 }
 
 export interface Gameweek {
@@ -145,12 +164,20 @@ export interface NotificationItem {
   created_at: string;
 }
 
+export interface ModelProbabilities {
+  home: number;
+  draw: number;
+  away: number;
+  source: string;
+}
+
 export interface MatchInsight {
   match_id: string;
   summary: string;
   provider: string;
+  model: ModelProbabilities;
 }
 
 export interface ApiErrorBody {
-  detail?: string | { msg: string }[];
+  detail?: string | { msg: string }[] | { message: string; [key: string]: unknown };
 }

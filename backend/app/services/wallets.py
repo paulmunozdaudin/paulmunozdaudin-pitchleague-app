@@ -2,8 +2,8 @@ import uuid
 
 from sqlalchemy.orm import Session
 
+from app.models.bet import Wallet
 from app.models.gameweek import Gameweek
-from app.models.prediction import Wallet
 
 
 def get_or_create_wallet(db: Session, user_id: uuid.UUID, league_id: uuid.UUID, gameweek: Gameweek) -> Wallet:

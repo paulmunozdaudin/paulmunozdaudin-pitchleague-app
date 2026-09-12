@@ -12,9 +12,11 @@ class League(UUIDPKMixin, TimestampMixin, Base):
     __tablename__ = "leagues"
 
     name: Mapped[str] = mapped_column(String(80))
+    avatar_emoji: Mapped[str] = mapped_column(String(10), default="⚽")
     invite_code: Mapped[str] = mapped_column(String(10), unique=True, index=True)
     admin_user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))
     budget_per_gameweek: Mapped[int] = mapped_column(Integer, default=10_000)
+    max_players: Mapped[int] = mapped_column(Integer, default=20)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
     seasons: Mapped[list["Season"]] = relationship(back_populates="league", cascade="all, delete-orphan")

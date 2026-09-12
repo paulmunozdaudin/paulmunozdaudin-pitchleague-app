@@ -46,11 +46,18 @@ class Selection(str, enum.Enum):
     NO = "no"
 
 
-class PredictionStatus(str, enum.Enum):
+class BetStatus(str, enum.Enum):
     PENDING = "pending"
     WON = "won"
     LOST = "lost"
     VOID = "void"
+
+
+class ActivityType(str, enum.Enum):
+    BET_PLACED = "bet_placed"
+    STREAK_MILESTONE = "streak_milestone"
+    BADGE_EARNED = "badge_earned"
+    GAMEWEEK_SETTLED = "gameweek_settled"
 
 
 class StreakType(str, enum.Enum):

@@ -19,9 +19,11 @@ def _to_out(db: Session, league: League, user: User) -> LeagueOut:
     return LeagueOut(
         id=league.id,
         name=league.name,
+        avatar_emoji=league.avatar_emoji,
         invite_code=league.invite_code,
         admin_user_id=league.admin_user_id,
         budget_per_gameweek=league.budget_per_gameweek,
+        max_players=league.max_players,
         member_count=leagues_service.member_count(db, league.id),
         is_admin=league.admin_user_id == user.id,
     )
@@ -31,7 +33,9 @@ def _to_out(db: Session, league: League, user: User) -> LeagueOut:
 def create_league(
     payload: LeagueCreate, db: Session = Depends(get_db), user: User = Depends(get_current_user)
 ) -> LeagueOut:
-    league = leagues_service.create_league(db, user, payload.name)
+    league = leagues_service.create_league(
+        db, user, payload.name, payload.avatar_emoji, payload.budget_per_gameweek, payload.max_players
+    )
     return _to_out(db, league, user)
 
 
@@ -77,7 +81,9 @@ def update_league(
     user: User = Depends(get_current_user),
     _admin: LeagueMembership = Depends(require_admin),
 ) -> LeagueOut:
-    league = leagues_service.update_league(db, league, payload.name, payload.budget_per_gameweek)
+    league = leagues_service.update_league(
+        db, league, payload.name, payload.budget_per_gameweek, payload.avatar_emoji, payload.max_players
+    )
     return _to_out(db, league, user)
 
 

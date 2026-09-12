@@ -3,16 +3,17 @@ import uuid
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from app.models.enums import GameweekStatus, PredictionStatus
+from app.models.bet import Bet, BetLeg, Wallet
+from app.models.enums import BetStatus, GameweekStatus
 from app.models.gameweek import Gameweek
 from app.models.gamification import Badge, UserBadge, UserStreak, UserXP
-from app.models.prediction import Prediction, Wallet
 from app.schemas.gamification import BadgeOut, ProfileStats
 from app.services.gamification import XP_PER_LEVEL
 
 
 def compute_profile_stats(db: Session, user_id: uuid.UUID, league_id: uuid.UUID | None = None) -> ProfileStats:
-    prediction_q = db.query(Prediction).filter(Prediction.user_id == user_id)
+    bet_q = db.query(Bet).filter(Bet.user_id == user_id)
+    leg_q = db.query(BetLeg).join(Bet, Bet.id == BetLeg.bet_id).filter(Bet.user_id == user_id)
     # Only gameweeks that have actually finished count towards "weeks
     # played" / "best week" — an in-progress wallet's balance is just money
     # currently at risk, not a result yet.
@@ -22,17 +23,23 @@ def compute_profile_stats(db: Session, user_id: uuid.UUID, league_id: uuid.UUID 
         .filter(Wallet.user_id == user_id, Gameweek.status == GameweekStatus.SETTLED)
     )
     if league_id:
-        prediction_q = prediction_q.filter(Prediction.league_id == league_id)
+        bet_q = bet_q.filter(Bet.league_id == league_id)
+        leg_q = leg_q.filter(Bet.league_id == league_id)
         wallet_q = wallet_q.filter(Wallet.league_id == league_id)
 
-    settled = prediction_q.filter(Prediction.status.in_([PredictionStatus.WON, PredictionStatus.LOST])).all()
-    won = [p for p in settled if p.status == PredictionStatus.WON]
+    # Accuracy and "highest multiplier" are per-pick concepts — a combo's
+    # four legs are four picks, not one — so they're computed over legs.
+    settled_legs = leg_q.filter(BetLeg.status.in_([BetStatus.WON, BetStatus.LOST])).all()
+    won_legs = [leg for leg in settled_legs if leg.status == BetStatus.WON]
+    accuracy = (len(won_legs) / len(settled_legs) * 100) if settled_legs else 0.0
+    highest_multiplier = max((float(leg.odds_price_at_pick) for leg in won_legs), default=0.0)
 
-    accuracy = (len(won) / len(settled) * 100) if settled else 0.0
-    total_staked = sum(p.stake for p in settled) or 0
-    total_returned = sum((p.payout or 0) for p in settled)
+    # ROI is a money-flow concept — computed over bets (one stake, one
+    # payout per slip), not legs.
+    settled_bets = bet_q.filter(Bet.status.in_([BetStatus.WON, BetStatus.LOST, BetStatus.VOID])).all()
+    total_staked = sum(b.stake for b in settled_bets) or 0
+    total_returned = sum((b.payout or 0) for b in settled_bets)
     roi = ((total_returned - total_staked) / total_staked * 100) if total_staked else 0.0
-    highest_multiplier = max((float(p.odds_price_at_pick) for p in won), default=0.0)
 
     wallets = wallet_q.all()
     weekly_nets = [w.current_balance - w.starting_balance for w in wallets]

@@ -1,60 +1,96 @@
-"""Turns raw match results into settled predictions, updated wallets, and
-(via `services.gamification`) badges/streaks/XP. This is the one place in
-the app where "did this pick win" is decided — see `_prediction_outcome`.
+"""Turns raw match results into settled bets, updated wallets, and (via
+`services.gamification`) badges/streaks/XP. `_leg_outcome` is the one place
+in the app where "did this leg win" is decided; `_settle_bet` is where a
+combination's per-leg outcomes turn into one payout.
 """
+
+from decimal import ROUND_HALF_UP, Decimal
 
 from sqlalchemy.orm import Session
 
 from app.db.base import utcnow
-from app.models.enums import GameweekStatus, Market, MatchOutcome, MatchStatus, PredictionStatus, Selection
+from app.models.bet import Bet, BetLeg, Wallet
+from app.models.enums import BetStatus, GameweekStatus, Market, MatchOutcome, MatchStatus, Selection
 from app.models.gameweek import Gameweek, Match
 from app.models.league import League, Season
-from app.models.prediction import Prediction, Wallet
 from app.services import gamification, notifications, rankings
 from app.services.odds_providers import get_odds_provider
 
 
-def _prediction_outcome(prediction: Prediction, match: Match) -> PredictionStatus:
-    """Returns WON, LOST or VOID for one settled (FINISHED) match."""
+def _leg_outcome(leg: BetLeg, match: Match) -> BetStatus:
+    """Returns WON, LOST or VOID for one leg of a (possibly single-leg)
+    bet, judged strictly against the match's actual final score — never
+    against the odds it was placed at."""
     if match.status != MatchStatus.FINISHED or match.result is None:
-        return PredictionStatus.VOID
+        return BetStatus.VOID
 
     home, away, result = match.home_score, match.away_score, match.result
 
-    if prediction.market == Market.WINNER:
+    if leg.market == Market.WINNER:
         won = (
-            (prediction.selection == Selection.HOME and result == MatchOutcome.HOME)
-            or (prediction.selection == Selection.DRAW and result == MatchOutcome.DRAW)
-            or (prediction.selection == Selection.AWAY and result == MatchOutcome.AWAY)
+            (leg.selection == Selection.HOME and result == MatchOutcome.HOME)
+            or (leg.selection == Selection.DRAW and result == MatchOutcome.DRAW)
+            or (leg.selection == Selection.AWAY and result == MatchOutcome.AWAY)
         )
-        return PredictionStatus.WON if won else PredictionStatus.LOST
+        return BetStatus.WON if won else BetStatus.LOST
 
-    if prediction.market == Market.DOUBLE_CHANCE:
+    if leg.market == Market.DOUBLE_CHANCE:
         won = (
-            (prediction.selection == Selection.HOME_OR_DRAW and result in (MatchOutcome.HOME, MatchOutcome.DRAW))
-            or (prediction.selection == Selection.AWAY_OR_DRAW and result in (MatchOutcome.AWAY, MatchOutcome.DRAW))
-            or (prediction.selection == Selection.HOME_OR_AWAY and result != MatchOutcome.DRAW)
+            (leg.selection == Selection.HOME_OR_DRAW and result in (MatchOutcome.HOME, MatchOutcome.DRAW))
+            or (leg.selection == Selection.AWAY_OR_DRAW and result in (MatchOutcome.AWAY, MatchOutcome.DRAW))
+            or (leg.selection == Selection.HOME_OR_AWAY and result != MatchOutcome.DRAW)
         )
-        return PredictionStatus.WON if won else PredictionStatus.LOST
+        return BetStatus.WON if won else BetStatus.LOST
 
-    if prediction.market == Market.OVER_UNDER:
+    if leg.market == Market.OVER_UNDER:
         total_goals = home + away
-        line = float(prediction.line) if prediction.line is not None else 2.5
+        line = float(leg.line) if leg.line is not None else 2.5
         if total_goals == line:
-            return PredictionStatus.VOID
-        won = (prediction.selection == Selection.OVER and total_goals > line) or (
-            prediction.selection == Selection.UNDER and total_goals < line
+            return BetStatus.VOID
+        won = (leg.selection == Selection.OVER and total_goals > line) or (
+            leg.selection == Selection.UNDER and total_goals < line
         )
-        return PredictionStatus.WON if won else PredictionStatus.LOST
+        return BetStatus.WON if won else BetStatus.LOST
 
-    if prediction.market == Market.BOTH_TEAMS_TO_SCORE:
+    if leg.market == Market.BOTH_TEAMS_TO_SCORE:
         both_scored = home > 0 and away > 0
-        won = (prediction.selection == Selection.YES and both_scored) or (
-            prediction.selection == Selection.NO and not both_scored
+        won = (leg.selection == Selection.YES and both_scored) or (
+            leg.selection == Selection.NO and not both_scored
         )
-        return PredictionStatus.WON if won else PredictionStatus.LOST
+        return BetStatus.WON if won else BetStatus.LOST
 
-    return PredictionStatus.VOID
+    return BetStatus.VOID
+
+
+def _settle_bet(bet: Bet, matches_by_id: dict) -> None:
+    """A combination wins only if every leg wins. A void leg (its match
+    was postponed/unresolved) is dropped from the price rather than
+    failing the whole bet — the same "void leg, resettle the rest"
+    convention real bookmakers use for accumulators."""
+    effective_odds = Decimal("1")
+    any_lost = False
+    any_won = False
+
+    for leg in bet.legs:
+        outcome = _leg_outcome(leg, matches_by_id[leg.match_id])
+        leg.status = outcome
+        if outcome == BetStatus.LOST:
+            any_lost = True
+        elif outcome == BetStatus.WON:
+            any_won = True
+            effective_odds *= leg.odds_price_at_pick
+
+    bet.settled_at = utcnow()
+    if any_lost:
+        bet.status = BetStatus.LOST
+        bet.payout = 0
+    elif any_won:
+        bet.status = BetStatus.WON
+        bet.payout = int((Decimal(bet.stake) * effective_odds).to_integral_value(rounding=ROUND_HALF_UP))
+    else:
+        # every leg void (e.g. the whole gameweek's matches were postponed)
+        bet.status = BetStatus.VOID
+        bet.payout = bet.stake
 
 
 def sync_match_results(db: Session, gameweek: Gameweek) -> int:
@@ -101,36 +137,23 @@ def settle_gameweek(db: Session, gameweek: Gameweek) -> bool:
     if any(m.status != MatchStatus.FINISHED for m in gameweek.matches):
         return False
 
-    predictions = db.query(Prediction).filter(Prediction.gameweek_id == gameweek.id).all()
+    bets = db.query(Bet).filter(Bet.gameweek_id == gameweek.id, Bet.status == BetStatus.PENDING).all()
     matches_by_id = {m.id: m for m in gameweek.matches}
-    wallets = {
-        w.user_id: w for w in db.query(Wallet).filter(Wallet.gameweek_id == gameweek.id).all()
-    }
+    wallets = {w.user_id: w for w in db.query(Wallet).filter(Wallet.gameweek_id == gameweek.id).all()}
 
-    for prediction in predictions:
-        if prediction.status != PredictionStatus.PENDING:
-            continue
-        match = matches_by_id[prediction.match_id]
-        outcome = _prediction_outcome(prediction, match)
-        prediction.status = outcome
-        prediction.settled_at = utcnow()
-
-        wallet = wallets.get(prediction.user_id)
-        if outcome == PredictionStatus.WON:
-            prediction.payout = prediction.potential_payout
-            if wallet:
-                wallet.current_balance += prediction.payout
-        elif outcome == PredictionStatus.VOID:
-            prediction.payout = prediction.stake
-            if wallet:
-                wallet.current_balance += prediction.stake
-        else:
-            prediction.payout = 0
+    for bet in bets:
+        _settle_bet(bet, matches_by_id)
+        wallet = wallets.get(bet.user_id)
+        if wallet and bet.payout:
+            wallet.current_balance += bet.payout
 
     gameweek.status = GameweekStatus.SETTLED
     db.commit()
 
     gamification.apply_gameweek_results(db, gameweek)
+    from app.model_engine.live import update_ratings_for_gameweek
+
+    update_ratings_for_gameweek(db, gameweek)
     _notify_members(db, gameweek)
     return True
 

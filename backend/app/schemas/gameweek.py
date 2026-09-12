@@ -4,7 +4,7 @@ from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict
 
-from app.models.enums import GameweekStatus, Market, MatchOutcome, MatchStatus, Selection
+from app.models.enums import BetStatus, GameweekStatus, Market, MatchOutcome, MatchStatus, Selection
 
 
 class OddsOut(BaseModel):
@@ -15,6 +15,21 @@ class OddsOut(BaseModel):
     line: Decimal | None
     price: Decimal
     fetched_at: datetime
+
+
+class MatchLegSummary(BaseModel):
+    """One of the caller's own picks on this match — a match can appear in
+    several of the caller's bets (a standalone pick and, separately, one
+    leg of a combo), so this is a list on MatchOut, not a single field."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    bet_id: uuid.UUID
+    market: Market
+    selection: Selection
+    line: Decimal | None
+    odds_price_at_pick: Decimal
+    status: BetStatus
 
 
 class MatchOut(BaseModel):
@@ -31,7 +46,7 @@ class MatchOut(BaseModel):
     result: MatchOutcome | None
     odds: list[OddsOut] = []
     is_locked: bool = False
-    my_prediction: "PredictionOut | None" = None
+    my_legs: list[MatchLegSummary] = []
 
 
 class GameweekOut(BaseModel):
@@ -47,8 +62,3 @@ class GameweekOut(BaseModel):
     matches: list[MatchOut] = []
     my_wallet_balance: int | None = None
     my_wallet_starting: int | None = None
-
-
-from app.schemas.prediction import PredictionOut  # noqa: E402
-
-MatchOut.model_rebuild()

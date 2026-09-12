@@ -21,12 +21,16 @@ def _generate_invite_code(db: Session) -> str:
     raise HTTPException(status_code=500, detail="Could not generate a unique invite code, try again")
 
 
-def create_league(db: Session, owner: User, name: str) -> League:
+def create_league(
+    db: Session, owner: User, name: str, avatar_emoji: str = "⚽", budget_per_gameweek: int = 10_000, max_players: int = 20
+) -> League:
     league = League(
         name=name,
+        avatar_emoji=avatar_emoji,
         invite_code=_generate_invite_code(db),
         admin_user_id=owner.id,
-        budget_per_gameweek=10_000,
+        budget_per_gameweek=budget_per_gameweek,
+        max_players=max_players,
     )
     db.add(league)
     db.flush()
@@ -50,9 +54,14 @@ def join_league(db: Session, user: User, invite_code: str) -> League:
     )
     if existing is not None:
         if not existing.is_active:
+            if member_count(db, league.id) >= league.max_players:
+                raise HTTPException(status_code=400, detail="Esta liga ya está completa")
             existing.is_active = True
             db.commit()
         return league
+
+    if member_count(db, league.id) >= league.max_players:
+        raise HTTPException(status_code=400, detail="Esta liga ya está completa")
 
     db.add(LeagueMembership(league_id=league.id, user_id=user.id, role=MembershipRole.MEMBER))
     db.commit()
@@ -77,11 +86,22 @@ def member_count(db: Session, league_id: uuid.UUID) -> int:
     )
 
 
-def update_league(db: Session, league: League, name: str | None, budget: int | None) -> League:
+def update_league(
+    db: Session,
+    league: League,
+    name: str | None,
+    budget: int | None,
+    avatar_emoji: str | None = None,
+    max_players: int | None = None,
+) -> League:
     if name:
         league.name = name
     if budget:
         league.budget_per_gameweek = budget
+    if avatar_emoji:
+        league.avatar_emoji = avatar_emoji
+    if max_players:
+        league.max_players = max_players
     db.commit()
     db.refresh(league)
     return league

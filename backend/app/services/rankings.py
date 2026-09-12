@@ -7,7 +7,7 @@ from app.models.enums import GameweekStatus, StreakType
 from app.models.gameweek import Gameweek
 from app.models.gamification import UserStreak
 from app.models.league import League, LeagueMembership, Season
-from app.models.prediction import Wallet
+from app.models.bet import Wallet
 from app.models.user import User
 from app.schemas.ranking import RankingRow
 

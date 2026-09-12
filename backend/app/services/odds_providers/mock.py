@@ -28,6 +28,8 @@ COMPETITIONS: dict[str, list[str]] = {
         "Manchester United", "Tottenham Hotspur",
     ],
     "Serie A": ["Inter de Milán", "Juventus", "AC Milan", "Napoli"],
+    "Bundesliga": ["Bayern Munich", "Dortmund", "RB Leipzig", "Leverkusen"],
+    "Ligue 1": ["Paris SG", "Marseille", "Lyon", "Monaco"],
 }
 
 _SLUG_TO_NAME = {name.lower().replace(" ", "-"): name for names in COMPETITIONS.values() for name in names}

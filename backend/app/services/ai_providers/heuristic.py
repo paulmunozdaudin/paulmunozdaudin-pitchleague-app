@@ -1,46 +1,54 @@
 """Zero-config fallback: no API key needed, and it's what runs when the
-Anthropic provider is unset or a call fails. Derives a plausible-sounding
-but fully deterministic "form" narrative from the match's own odds skew and
-a hash of the team names — same trick as the mock odds provider — so
-insights are stable and don't require calling out to any real stats
-source for the MVP.
+Anthropic provider is unset or a call fails. Unlike the product's first
+draft, this does NOT invent form/xG narrative — it only phrases the real
+numbers handed to it in `InsightContext` (the Model Engine's own
+probabilities, and the market's for comparison). If those numbers all a
+provider has, that's a feature: it structurally can't say anything that
+didn't come from real data.
 """
 
-import hashlib
-import random
+from app.services.ai_providers.base import AIInsightProvider, InsightContext
 
-from app.models.enums import Market, Selection
-from app.models.gameweek import Match
-from app.services.ai_providers.base import AIInsightProvider
-
-
-def _rng(*parts: str) -> random.Random:
-    digest = hashlib.sha256("|".join(parts).encode()).hexdigest()
-    return random.Random(int(digest[:16], 16))
-
-
-FORM_PHRASES = ["en un gran momento de forma", "con altibajos en las últimas jornadas", "invicto en las últimas semanas", "recuperándose tras un tramo irregular"]
-XG_PHRASES = ["un xG superior al de su rival", "números de xG muy parejos con el rival", "un xG algo por debajo de su rival"]
-CONTEXT_PHRASES = ["Llega motivado tras una buena racha como local.", "El calendario reciente ha sido exigente.", "Sin bajas relevantes de cara a este partido.", "Recupera a una pieza importante para este encuentro."]
+FAVORITE_TEMPLATES = [
+    "Nuestro modelo ({source}) da a {favorite} un {prob}% de opciones de ganar este partido.",
+]
+CLOSE_TEMPLATE = "Nuestro modelo ({source}) ve este partido muy igualado: {home}% / {draw}% / {away}%."
+AGREEMENT_TEMPLATE = " El mercado opina lo mismo — cuotas alineadas con el modelo."
+DISAGREEMENT_TEMPLATE = " El mercado difiere algo: le da a {favorite} un {market_prob}%."
 
 
 class HeuristicInsightProvider(AIInsightProvider):
     name = "heuristic"
 
-    def generate_match_insight(self, match: Match) -> str:
-        rng = _rng("insight", match.home_team, match.away_team, str(match.id))
+    def generate_match_insight(self, context: InsightContext) -> str:
+        home_pct = round(context.model_home_prob * 100)
+        draw_pct = round(context.model_draw_prob * 100)
+        away_pct = round(context.model_away_prob * 100)
 
-        winner_odds = {q.selection: q.price for q in match.current_odds() if q.market == Market.WINNER}
-        home_price, away_price = winner_odds.get(Selection.HOME), winner_odds.get(Selection.AWAY)
+        probs = {"home": home_pct, "draw": draw_pct, "away": away_pct}
+        top_side = max(probs, key=probs.get)
 
-        favorite = None
-        if home_price and away_price:
-            favorite = match.home_team if home_price < away_price else match.away_team
+        if probs[top_side] - draw_pct < 8:
+            sentence = CLOSE_TEMPLATE.format(source=context.model_source, home=home_pct, draw=draw_pct, away=away_pct)
+        else:
+            favorite = context.match.home_team if top_side == "home" else context.match.away_team
+            sentence = FAVORITE_TEMPLATES[0].format(source=context.model_source, favorite=favorite, prob=probs[top_side])
 
-        sentence = (
-            f"{match.home_team} llega {rng.choice(FORM_PHRASES)} y con {rng.choice(XG_PHRASES)} "
-            f"en las últimas jornadas frente al {match.away_team}. {rng.choice(CONTEXT_PHRASES)}"
-        )
-        if favorite:
-            sentence += f" El mercado sitúa a {favorite} como ligero favorito."
+        if context.market_home_prob is not None:
+            market_probs = {
+                "home": round(context.market_home_prob * 100),
+                "draw": round(context.market_draw_prob * 100),
+                "away": round(context.market_away_prob * 100),
+            }
+            if abs(market_probs[top_side] - probs[top_side]) <= 5:
+                sentence += AGREEMENT_TEMPLATE
+            else:
+                market_favorite_side = max(market_probs, key=market_probs.get)
+                market_favorite = (
+                    context.match.home_team if market_favorite_side == "home" else context.match.away_team
+                )
+                sentence += DISAGREEMENT_TEMPLATE.format(
+                    favorite=market_favorite, market_prob=market_probs[market_favorite_side]
+                )
+
         return sentence

@@ -9,12 +9,13 @@ from decimal import Decimal
 from sqlalchemy.orm import Session
 
 from app.db.base import utcnow
-from app.models.enums import ChallengeStatus, Market, PredictionStatus, Selection, StreakType
+from app.models.bet import Bet, BetLeg
+from app.models.enums import ActivityType, BetStatus, ChallengeStatus, Market, Selection, StreakType
 from app.models.gameweek import Gameweek
 from app.models.gamification import Badge, Challenge, UserBadge, UserChallenge, UserStreak, UserXP
 from app.models.league import League, LeagueMembership, Season
-from app.models.prediction import Prediction
 from app.services import rankings
+from app.services.activity import record_activity
 
 XP_PER_CORRECT_PICK = 15
 XP_PER_PICK_PLAYED = 3
@@ -57,6 +58,13 @@ def _award_badge(db: Session, user_id, league_id, gameweek_id, code: str) -> str
     if already:
         return None
     db.add(UserBadge(user_id=user_id, league_id=league_id, badge_id=badge.id, gameweek_id=gameweek_id))
+    record_activity(
+        db,
+        league_id=league_id,
+        user_id=user_id,
+        type=ActivityType.BADGE_EARNED,
+        data={"code": badge.code, "name": badge.name, "icon": badge.icon},
+    )
     return code
 
 
@@ -96,15 +104,21 @@ def apply_gameweek_results(db: Session, gameweek: Gameweek) -> None:
     positions_after = rankings.season_positions(db, league, season, gameweek.number)
 
     member_ids = [m.user_id for m in db.query(LeagueMembership).filter(LeagueMembership.league_id == league.id).all()]
-    predictions_by_user: dict = {uid: [] for uid in member_ids}
-    for prediction in db.query(Prediction).filter(Prediction.gameweek_id == gameweek.id).all():
-        predictions_by_user.setdefault(prediction.user_id, []).append(prediction)
+    legs_by_user: dict = {uid: [] for uid in member_ids}
+    leg_rows = (
+        db.query(BetLeg, Bet.user_id)
+        .join(Bet, Bet.id == BetLeg.bet_id)
+        .filter(Bet.gameweek_id == gameweek.id)
+        .all()
+    )
+    for leg, user_id in leg_rows:
+        legs_by_user.setdefault(user_id, []).append(leg)
 
     best_odds_user, best_odds_value = None, Decimal("0")
 
     for user_id in member_ids:
-        picks = predictions_by_user.get(user_id, [])
-        correct = [p for p in picks if p.status == PredictionStatus.WON]
+        picks = legs_by_user.get(user_id, [])
+        correct = [p for p in picks if p.status == BetStatus.WON]
         total = len(picks)
 
         _add_xp(db, user_id, len(correct) * XP_PER_CORRECT_PICK + total * XP_PER_PICK_PLAYED)
@@ -125,8 +139,8 @@ def apply_gameweek_results(db: Session, gameweek: Gameweek) -> None:
         if streak_count >= 5:
             _award_badge(db, user_id, league.id, gameweek.id, "invencible")
 
-        for prediction in correct:
-            price = prediction.odds_price_at_pick
+        for leg in correct:
+            price = leg.odds_price_at_pick
             if price >= Decimal("3.5"):
                 _award_badge(db, user_id, league.id, gameweek.id, "giant_killer")
             elif price >= Decimal("2.0"):
@@ -142,7 +156,7 @@ def apply_gameweek_results(db: Session, gameweek: Gameweek) -> None:
     db.commit()
 
 
-def _evaluate_challenges(db: Session, user_id, gameweek: Gameweek, picks: list[Prediction], correct: list[Prediction]) -> None:
+def _evaluate_challenges(db: Session, user_id, gameweek: Gameweek, picks: list[BetLeg], correct: list[BetLeg]) -> None:
     challenges = db.query(Challenge).filter(Challenge.gameweek_id == gameweek.id).all()
     for challenge in challenges:
         hit = False
