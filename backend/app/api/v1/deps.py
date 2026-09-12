@@ -40,3 +40,9 @@ def require_admin(membership: LeagueMembership = Depends(get_membership)) -> Lea
     if membership.role != MembershipRole.ADMIN:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin only")
     return membership
+
+
+def require_staff(user: User = Depends(get_current_user)) -> User:
+    if not user.is_staff:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Staff only")
+    return user

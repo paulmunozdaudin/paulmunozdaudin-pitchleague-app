@@ -1,17 +1,19 @@
 "use client";
 
-import { Bell, LogOut } from "lucide-react";
+import { Bell, LogOut, ShieldAlert } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { PlayerAvatar } from "@/components/ui/avatar";
 import { useApi } from "@/hooks/useApi";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import type { NotificationItem } from "@/types/api";
 
 export function TopNav() {
   const { data: session } = useSession();
   const api = useApi();
+  const { user } = useCurrentUser();
   const [unread, setUnread] = useState(0);
 
   useEffect(() => {
@@ -33,6 +35,15 @@ export function TopNav() {
         </Link>
 
         <div className="flex items-center gap-3">
+          {user?.is_staff && (
+            <Link
+              href="/admin/system"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-muted hover:bg-surface-raised hover:text-foreground"
+              title="Panel de sistema"
+            >
+              <ShieldAlert className="h-4.5 w-4.5" />
+            </Link>
+          )}
           <Link
             href="/notifications"
             className="relative flex h-9 w-9 items-center justify-center rounded-full text-muted hover:bg-surface-raised hover:text-foreground"

@@ -9,6 +9,7 @@ from app.models.gamification import Badge, Challenge, UserBadge, UserChallenge, 
 from app.models.league import League, LeagueMembership, Season
 from app.models.model_registry import ModelVersion, TeamRating
 from app.models.notification import Notification
+from app.models.ops import FailedJob
 from app.models.user import User
 
 __all__ = [
@@ -33,4 +34,5 @@ __all__ = [
     "ModelVersion",
     "TeamRating",
     "LeagueActivity",
+    "FailedJob",
 ]

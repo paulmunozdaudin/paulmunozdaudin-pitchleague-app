@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import String
+from sqlalchemy import Boolean, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base, TimestampMixin, UUIDPKMixin
@@ -12,6 +12,11 @@ class User(UUIDPKMixin, TimestampMixin, Base):
     email: Mapped[str] = mapped_column(String(320), unique=True, index=True)
     name: Mapped[str] = mapped_column(String(120))
     avatar_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
+
+    # Platform-level staff access (the system admin panel), distinct from
+    # being a league's admin — see core/security.py, bootstrapped from
+    # STAFF_EMAILS since there's no in-app role-granting UI.
+    is_staff: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # Identity of the OAuth provider that created this account (google |
     # discord | apple). Bridged in from the NextAuth session — see

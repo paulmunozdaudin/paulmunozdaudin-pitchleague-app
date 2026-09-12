@@ -10,3 +10,4 @@ class UserOut(BaseModel):
     email: str
     name: str
     avatar_url: str | None = None
+    is_staff: bool = False

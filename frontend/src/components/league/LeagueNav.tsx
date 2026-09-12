@@ -1,12 +1,13 @@
 "use client";
 
-import { Bell, Bot, Goal, Home, LogOut, Settings, Trophy, User } from "lucide-react";
+import { Bell, Bot, Goal, Home, LogOut, Settings, ShieldAlert, Trophy, User } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useApi } from "@/hooks/useApi";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { cn } from "@/lib/utils";
 import type { NotificationItem } from "@/types/api";
 import { useLeague } from "./LeagueContext";
@@ -61,6 +62,7 @@ export function LeagueSidebar() {
   const items = useNavItems();
   const pathname = usePathname();
   const api = useApi();
+  const { user } = useCurrentUser();
   const [unread, setUnread] = useState(0);
 
   useEffect(() => {
@@ -133,6 +135,20 @@ export function LeagueSidebar() {
           >
             <Settings className="h-4.5 w-4.5" />
             Admin
+          </Link>
+        )}
+        {user?.is_staff && (
+          <Link
+            href="/admin/system"
+            className={cn(
+              "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+              pathname === "/admin/system"
+                ? "bg-primary/10 text-primary"
+                : "text-muted hover:bg-surface-raised hover:text-foreground"
+            )}
+          >
+            <ShieldAlert className="h-4.5 w-4.5" />
+            Sistema
           </Link>
         )}
       </div>

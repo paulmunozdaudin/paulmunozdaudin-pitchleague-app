@@ -20,6 +20,7 @@ export interface User {
   email: string;
   name: string;
   avatar_url: string | null;
+  is_staff?: boolean;
 }
 
 export interface League {
@@ -186,6 +187,39 @@ export interface MatchInsight {
   summary: string;
   provider: string;
   model: ModelProbabilities;
+}
+
+export interface SystemOverview {
+  users_count: number;
+  leagues_count: number;
+  matches_count: number;
+  open_gameweeks_count: number;
+  odds_provider: string;
+  ai_insights_provider: string;
+}
+
+export interface SystemModelVersion {
+  id: string;
+  division: string;
+  model_name: string;
+  trained_at: string;
+  is_active: boolean;
+  metrics: Record<string, unknown>;
+}
+
+export interface OddsHealthRow {
+  competition: string;
+  matches_open: number;
+  stale_matches: number;
+  last_fetched_at: string | null;
+}
+
+export interface FailedJob {
+  id: string;
+  job_name: string;
+  reference: string | null;
+  error_message: string;
+  occurred_at: string;
 }
 
 export interface ApiErrorBody {

@@ -71,6 +71,7 @@ def get_current_user(
         .filter(User.auth_provider == payload.provider, User.auth_provider_id == payload.sub)
         .first()
     )
+    needs_commit = False
     if user is None:
         # First sign-in with this provider identity — try to merge into an
         # existing account by email, otherwise provision a new one.
@@ -87,6 +88,14 @@ def get_current_user(
         else:
             user.auth_provider = payload.provider
             user.auth_provider_id = payload.sub
+        needs_commit = True
+
+    should_be_staff = payload.email.lower() in settings.staff_email_set
+    if user.is_staff != should_be_staff:
+        user.is_staff = should_be_staff
+        needs_commit = True
+
+    if needs_commit:
         db.commit()
         db.refresh(user)
 
